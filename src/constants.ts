@@ -1,1 +1,1 @@
-export const API_BASE_URL = process.env.VERCEL_ENV ? new URL("/api", `https://${process.env.VERCEL_URL}`).toString() : "http://localhost:3000/api"
+export const API_BASE_URL = process.env.VERCEL_ENV ? new URL("/api", `https://${process.env.VERCEL_URL!}`).toString() : "http://localhost:3000/api"

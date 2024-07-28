@@ -1,12 +1,11 @@
 import React from "react";
 import { nanoid } from "nanoid";
-import { fetchData } from "@/lib/queries";
 import { ChevronRight, Volume2 } from "lucide-react";
+import { serverGetVocabularies } from "@/lib/utils";
 
 const List = async () => {
-  const data: Record<string, any>[] = await fetchData("/vocabularies", [
-    "vocabularies",
-  ]);
+  const data = await serverGetVocabularies();
+
   return (
     <section>
       <div className="flex flex-col gap-5">
