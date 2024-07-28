@@ -1,7 +1,7 @@
 import React from "react";
 import { nanoid } from "nanoid";
 import { ChevronRight, Volume2 } from "lucide-react";
-import { serverGetVocabularies } from "@/lib/utils";
+import { serverGetVocabularies } from "@/lib/action";
 
 const List = async () => {
   const data = await serverGetVocabularies();
