@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
 import { readFile, writeFile } from "fs/promises";
 import path from "path";
 import { addVocabularySchema } from "@/lib/validation";
