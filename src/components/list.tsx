@@ -20,7 +20,7 @@ const List = async () => {
             <div className="px-4 py-5 sm:p-6">
               <div className="flex justify-between">
                 <div className="flex items-center">
-                  <p className="font-semibold">{value.hangul}</p>
+                  <p className="font-semibold line-clamp-1">{value.hangul}</p>
                   <button className="hover:bg-zinc-400/10 dark:hover:text-zinc-50/50 rounded-full ml-1 p-1">
                     <Volume2
                       className="text-zinc-400 dark:text-blue-200"
@@ -30,10 +30,12 @@ const List = async () => {
                 </div>
                 <VocabActions data={value} />
               </div>
-              <p className="text-sm text-zinc-500">{value.translation}</p>
+              <p className="text-sm text-zinc-500 truncate">
+                {value.translation}
+              </p>
               <Badge
                 variant={"outline"}
-                className="mt-2 text-[12px] rounded-md border-zinc-300"
+                className="mt-2 text-[11px] rounded-md border-zinc-300"
               >
                 {value.chapter ? `Bab ${value.chapter}` : "Acak"}
               </Badge>
