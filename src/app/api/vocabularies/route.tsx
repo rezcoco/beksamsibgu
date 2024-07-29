@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { readFile, writeFile } from "fs/promises";
 import path from "path";
 import { addVocabularySchema } from "@/lib/validation";
+import { createId } from "@paralleldrive/cuid2";
+import { serverDeleteVocabulary } from "@/lib/action";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -31,9 +33,9 @@ export async function POST(request: NextRequest) {
       vocabulariesJson
     );
 
-    vocabularies.push(data);
+    vocabularies.push(Object.assign(data, { id: createId() }));
 
-    const write = await writeFile(readPath, JSON.stringify(vocabularies));
+    await writeFile(readPath, JSON.stringify(vocabularies));
 
     return NextResponse.json(
       {
@@ -44,7 +46,7 @@ export async function POST(request: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
-    console.log(error.message);
+    console.log(error);
     return NextResponse.json(
       {
         message: "Something went wrong",
@@ -78,7 +80,45 @@ export async function GET(request: NextRequest) {
       { status: 200 }
     );
   } catch (error: any) {
-    console.log(error.message);
+    console.log(error);
+    return NextResponse.json(
+      {
+        message: "Something went wrong",
+        name: "InternalServerError",
+        success: false,
+        errors: null,
+      },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const id = searchParams.get("id");
+
+  if (!id) {
+    return NextResponse.json(
+      {
+        message: "Id required",
+        name: "ValidationError",
+        success: false,
+        errors: null,
+      },
+      { status: 400 }
+    );
+  }
+
+  try {
+    await serverDeleteVocabulary(id);
+
+    return NextResponse.json({
+      message: "success",
+      name: "OK",
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
     return NextResponse.json(
       {
         message: "Something went wrong",

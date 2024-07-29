@@ -1,27 +1,52 @@
 import React from "react";
-import { nanoid } from "nanoid";
+import { createId } from "@paralleldrive/cuid2";
 import { ChevronRight, Volume2 } from "lucide-react";
 import { serverGetVocabularies } from "@/lib/action";
+import Link from "next/link";
+import VocabActions from "./vocab-actions";
+import { Badge } from "./ui/badge";
 
 const List = async () => {
   const data = await serverGetVocabularies();
 
   return (
     <section>
-      <div className="flex flex-col gap-5">
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {data.map((value) => (
           <div
-            key={nanoid()}
-            className="bg-muted rounded-lg px-6 py-5 flex justify-between items-center"
+            key={createId()}
+            className="shadow-sm dark:shadow-none flex-col rounded-lg bg-emerald-50 dark:bg-muted flex"
           >
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <p className="text-base font-semibold">{value.hangul}</p>
-                <Volume2 size={16} className="text-zinc-400" />
+            <div className="px-4 py-5 sm:p-6">
+              <div className="flex justify-between">
+                <div className="flex items-center">
+                  <p className="font-semibold">{value.hangul}</p>
+                  <button className="hover:bg-zinc-400/10 dark:hover:text-zinc-50/50 rounded-full ml-1 p-1">
+                    <Volume2
+                      className="text-zinc-400 dark:text-blue-200"
+                      size={14}
+                    />
+                  </button>
+                </div>
+                <VocabActions data={value} />
               </div>
-              <p className="text-sm">{value.translation}</p>
+              <p className="text-sm text-zinc-500">{value.translation}</p>
+              <Badge
+                variant={"outline"}
+                className="mt-2 text-[12px] rounded-md border-zinc-300"
+              >
+                {value.chapter ? `Bab ${value.chapter}` : "Acak"}
+              </Badge>
             </div>
-            <ChevronRight size={20} className="text-zinc-400" />
+            <Link
+              href="/"
+              className="bg-white dark:bg-zinc-700 rounded-b-lg px-4 py-2 sm:px-6 flex justify-between items-center"
+            >
+              <p className="text-xs text-muted-foreground">
+                Lihat selengkapnya
+              </p>
+              <ChevronRight size={16} className="text-muted-foreground" />
+            </Link>
           </div>
         ))}
       </div>

@@ -13,7 +13,7 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 
 import { ScrollArea } from "./ui/scroll-area";
-import { nanoid } from "nanoid";
+import { createId } from "@paralleldrive/cuid2";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { addVocabularySchema, AddVocabularySchemaType } from "@/lib/validation";
@@ -103,7 +103,7 @@ const AddVocabulary = () => {
       <Button
         variant={"filled"}
         onClick={() => setOpen((prevState) => !prevState)}
-        className="h-9 px-5 py-3 flex items-center"
+        className="h-9 px-6 py-3 w-fit flex items-center max-md:ml-auto"
       >
         Tambahkan Baru
       </Button>
@@ -270,7 +270,7 @@ const AddVocabulary = () => {
                                         (_, index) => (
                                           <li
                                             className="list-none hover:text-zinc-400 w-full"
-                                            key={nanoid()}
+                                            key={createId()}
                                           >
                                             <button
                                               onClick={() =>
