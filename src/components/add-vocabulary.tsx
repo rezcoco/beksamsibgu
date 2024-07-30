@@ -330,13 +330,13 @@ const AddVocabulary = () => {
                         disabled={isLoading}
                         className="h-9 px-5 py-3 rounded-md flex items-center ml-4"
                       >
-                        Save
                         {isLoading && (
                           <Loader2Icon
                             size={16}
                             className="ml-1 text-gray-200 animate-spin"
                           />
                         )}
+                        {isLoading ? "Save..." : "Save"}
                       </Button>
                     </div>
                   </form>
