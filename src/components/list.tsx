@@ -1,18 +1,18 @@
 import React from "react";
 import { createId } from "@paralleldrive/cuid2";
 import { ChevronRight, Volume2 } from "lucide-react";
-import { serverGetVocabularies } from "@/lib/action";
 import Link from "next/link";
 import VocabActions from "./vocab-actions";
 import { Badge } from "./ui/badge";
+import { selectVocabularies } from "@/lib/actions";
 
 const List = async () => {
-  const data = await serverGetVocabularies();
+  const data = await selectVocabularies({});
 
   return (
     <section>
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {data.map((value) => (
+      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+        {data.map(({ record: value }) => (
           <div
             key={createId()}
             className="shadow-sm dark:shadow-none flex-col rounded-lg bg-emerald-50 dark:bg-muted flex"

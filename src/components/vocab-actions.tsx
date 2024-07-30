@@ -14,21 +14,27 @@ import {
 import { VocabulariesType } from "@/types/type";
 import { axiosRequest } from "@/lib/axios";
 import toast from "react-hot-toast";
-import { revalidateAction } from "@/lib/action";
+import { revalidateAction } from "@/lib/actions";
+import { SelectVocabType } from "@/drizzle/schema";
 
 const VocabActions: React.FC<{
-  data: VocabulariesType;
+  data: SelectVocabType;
 }> = ({ data }) => {
   const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
   async function onDeleteVocab() {
+    setIsDeleteLoading(true);
+    const toastId = toast.loading("Menunggu...");
+
     try {
-      setIsDeleteLoading(true);
       await axiosRequest.delete(`/vocabularies?id=${data.id}`);
       await revalidateAction("vocabularies");
+
+      toast.dismiss(toastId);
       toast.success("Sukses dihapus");
     } catch (error: any) {
       console.error(error);
       const status = error?.response?.status;
+      toast.dismiss(toastId);
 
       if (status !== 400) {
         toast.error("Something went wrong");

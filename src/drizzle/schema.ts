@@ -65,8 +65,8 @@ export const vocabInsertSchema = createInsertSchema(vocabulariesTable, {
   note: z.string().optional()
 })
 
-export type InsertUser = typeof usersTable.$inferInsert
-export type SelectUser = typeof usersTable.$inferSelect
+export type InsertUserType = typeof usersTable.$inferInsert
+export type SelectUserType = typeof usersTable.$inferSelect
 
-export type InsertVocab = typeof vocabulariesTable.$inferInsert
-export type SelectVocab = typeof vocabulariesTable.$inferSelect
+export type InsertVocabType = typeof vocabulariesTable.$inferInsert
+export type SelectVocabType = typeof vocabulariesTable.$inferSelect

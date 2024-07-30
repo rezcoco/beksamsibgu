@@ -7,7 +7,7 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
-import { Check, XIcon } from "lucide-react";
+import { Check, Loader2Icon, XIcon } from "lucide-react";
 import { Button } from "./button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
@@ -32,7 +32,7 @@ import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import { axiosRequest } from "@/lib/axios";
 import toast from "react-hot-toast";
-import { revalidateAction } from "@/lib/action";
+import { revalidateAction } from "@/lib/actions";
 
 const AddVocabulary = () => {
   const [open, setOpen] = React.useState(false);
@@ -331,6 +331,12 @@ const AddVocabulary = () => {
                         className="h-9 px-5 py-3 rounded-md flex items-center ml-4"
                       >
                         Save
+                        {isLoading && (
+                          <Loader2Icon
+                            size={16}
+                            className="ml-1 text-gray-200 animate-spin"
+                          />
+                        )}
                       </Button>
                     </div>
                   </form>
