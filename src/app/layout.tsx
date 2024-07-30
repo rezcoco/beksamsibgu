@@ -11,7 +11,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: {
     template: "%s - Beksamsibgu",
-    default: "Pustaka kosa kata korea",
+    default: "Pustaka Kosa Kata Korea",
   },
 };
 
