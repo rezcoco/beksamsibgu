@@ -48,7 +48,7 @@ const AddVocabulary = () => {
       hangul: "",
       translation: "",
       note: "",
-      senteceEx: "",
+      sentenceEx: "",
       translationEx: "",
       reference: "",
       chapter: undefined,
@@ -195,14 +195,14 @@ const AddVocabulary = () => {
                                 <div className="pl-6 mt-4 flex flex-col gap-4">
                                   <FormField
                                     control={form.control}
-                                    name="senteceEx"
+                                    name="sentenceEx"
                                     render={({ field }) => (
                                       <FormItem>
-                                        <FormLabel htmlFor="senteceEx">
+                                        <FormLabel htmlFor="sentenceEx">
                                           Contoh Kalimat
                                         </FormLabel>
                                         <FormControl className="mt-2">
-                                          <Input {...field} id="senteceEx" />
+                                          <Input {...field} id="sentenceEx" />
                                         </FormControl>
                                       </FormItem>
                                     )}

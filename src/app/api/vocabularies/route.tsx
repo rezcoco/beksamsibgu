@@ -1,15 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile, writeFile } from "fs/promises";
-import path from "path";
-import { addVocabularySchema } from "@/lib/validation";
-import { createId } from "@paralleldrive/cuid2";
-import { serverDeleteVocabulary } from "@/lib/action";
+import { db } from "@/drizzle/client";
+import { vocabInsertSchema, vocabulariesTable } from "@/drizzle/schema";
+import { eq, sql } from "drizzle-orm";
+
+export const dynamic = "force-dynamic";
+export const runtime = "edge";
+
+const pageSize = 20;
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const validation = addVocabularySchema.safeParse(body);
-
-  const readPath = path.join(process.cwd(), "data", "vocabularies.json");
+  const validation = vocabInsertSchema.safeParse(body);
 
   if (!validation.success) {
     return NextResponse.json(
@@ -26,16 +27,7 @@ export async function POST(request: NextRequest) {
   try {
     const data = validation.data;
 
-    const vocabulariesJson = await readFile(readPath, {
-      encoding: "utf-8",
-    });
-    const vocabularies: Record<string, any>[] = await JSON.parse(
-      vocabulariesJson
-    );
-
-    vocabularies.push(Object.assign(data, { id: createId() }));
-
-    await writeFile(readPath, JSON.stringify(vocabularies));
+    await db.insert(vocabulariesTable).values(data);
 
     return NextResponse.json(
       {
@@ -60,22 +52,28 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  try {
-    const readPath = path.join(process.cwd(), "data", "vocabularies.json");
+  const searchParams = request.nextUrl.searchParams;
+  const page = Number(searchParams.get("page")) || 1;
+  const skip = (page - 1) * pageSize;
+  const chapter = searchParams.get("chapter");
 
-    const vocabulariesJson = await readFile(readPath, {
-      encoding: "utf-8",
-    });
-    const vocabularies: Record<string, any>[] = await JSON.parse(
-      vocabulariesJson
-    );
+  try {
+    const vocabs = await db
+      .select({
+        record: vocabulariesTable,
+        count: sql<number>`count(*) over()`,
+      })
+      .from(vocabulariesTable)
+      .groupBy(vocabulariesTable.id)
+      .offset(skip)
+      .limit(pageSize);
 
     return NextResponse.json(
       {
         message: "success",
         success: true,
         name: "OK",
-        data: vocabularies,
+        data: vocabs,
       },
       { status: 200 }
     );
@@ -110,7 +108,22 @@ export async function DELETE(request: NextRequest) {
   }
 
   try {
-    await serverDeleteVocabulary(id);
+    const vocab = await db
+      .delete(vocabulariesTable)
+      .where(eq(vocabulariesTable.id, id))
+      .returning();
+
+    if (vocab.length === 0) {
+      return NextResponse.json(
+        {
+          message: "record not found",
+          name: "NotFoundError",
+          status: false,
+          errors: null,
+        },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json({
       message: "success",

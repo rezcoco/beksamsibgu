@@ -5,7 +5,7 @@ export const addVocabularySchema = z.object({
   translation: z.string().min(1, "Arti tidak boleh kosong"),
   chapter: z.number().min(1).max(60).optional(),
   reference: z.string().optional(),
-  senteceEx: z.string().optional(),
+  sentenceEx: z.string().optional(),
   translationEx: z.string().optional(),
   note: z.string().optional()
 })
