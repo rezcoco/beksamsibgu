@@ -30,7 +30,7 @@ const List = async () => {
                 </div>
                 <VocabActions data={value} />
               </div>
-              <p className="text-sm text-zinc-500 truncate">
+              <p className="text-sm text-zinc-500 line-clamp-2">
                 {value.translation}
               </p>
               <Badge
