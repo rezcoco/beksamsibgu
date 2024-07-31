@@ -1,15 +1,8 @@
-"use server"
-
 import { db } from "@/drizzle/client"
 import { vocabulariesTable } from "@/drizzle/schema"
 import { sql } from "drizzle-orm"
-import { revalidateTag } from "next/cache"
 
 const pageSize = 20
-
-export async function revalidateAction(tag: string) {
-  revalidateTag(tag)
-}
 
 export async function selectVocabularies(params: {
   page?: number
@@ -18,6 +11,7 @@ export async function selectVocabularies(params: {
   const offset = (page - 1) * pageSize
 
   try {
+
     const vocabs = db.select({
       record: vocabulariesTable,
       count: sql<number>`count(*) over()`

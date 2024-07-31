@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/drizzle/client";
 import { insertVocabSchema, vocabulariesTable } from "@/drizzle/schema";
 import { eq, sql } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 export const runtime = "edge";
@@ -28,6 +29,7 @@ export async function POST(request: NextRequest) {
     const data = validation.data;
 
     await db.insert(vocabulariesTable).values(data);
+    revalidatePath("/kosa-kata");
 
     return NextResponse.json(
       {
@@ -124,6 +126,8 @@ export async function DELETE(request: NextRequest) {
         { status: 404 }
       );
     }
+
+    revalidatePath("/kosa-kata");
 
     return NextResponse.json({
       message: "success",
