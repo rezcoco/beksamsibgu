@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/drizzle/client";
-import { vocabInsertSchema, vocabulariesTable } from "@/drizzle/schema";
+import { insertVocabSchema, vocabulariesTable } from "@/drizzle/schema";
 import { eq, sql } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ const pageSize = 20;
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const validation = vocabInsertSchema.safeParse(body);
+  const validation = insertVocabSchema.safeParse(body);
 
   if (!validation.success) {
     return NextResponse.json(

@@ -47,7 +47,7 @@ export const vocabulariesTable = pgTable("vocabularies", {
   updatedAt: timestamp("updated_at").notNull().$onUpdate(() => new Date())
 })
 
-export const userInsertSchema = createInsertSchema(usersTable, {
+export const insertUserSchema = createInsertSchema(usersTable, {
   name: z.string().min(1, "Nama harus diisi"),
   username: z.string().min(1, "Username harus diisi"),
   email: z.string().email().min(1, "Email harus diisi"),
@@ -55,15 +55,18 @@ export const userInsertSchema = createInsertSchema(usersTable, {
   picture: z.string().optional(),
 })
 
-export const vocabInsertSchema = createInsertSchema(vocabulariesTable, {
+export const insertVocabSchema = createInsertSchema(vocabulariesTable, {
   hangul: z.string().min(1, "Hangul tidak boleh kosong"),
   translation: z.string().min(1, "Arti tidak boleh kosong"),
   chapter: z.number().min(1).max(60).optional(),
-  reference: z.string().optional(),
+  reference: (schema) => schema.reference.optional(),
   sentenceEx: z.string().optional(),
   translationEx: z.string().optional(),
   note: z.string().optional()
 })
+
+export type InsertVocabSchemaType = z.infer<typeof insertVocabSchema>
+export type InsertUserSchemaType = z.infer<typeof insertUserSchema>
 
 export type InsertUserType = typeof usersTable.$inferInsert
 export type SelectUserType = typeof usersTable.$inferSelect

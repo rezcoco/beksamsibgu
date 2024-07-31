@@ -13,10 +13,8 @@ import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 
 import { ScrollArea } from "./ui/scroll-area";
-import { createId } from "@paralleldrive/cuid2";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { addVocabularySchema, AddVocabularySchemaType } from "@/lib/validation";
 import {
   FormControl,
   FormField,
@@ -31,10 +29,13 @@ import { CaretSortIcon } from "@radix-ui/react-icons";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import { axiosRequest } from "@/lib/axios";
+import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { revalidateAction } from "@/lib/actions";
+import { insertVocabSchema, InsertVocabSchemaType } from "@/drizzle/schema";
 
 const AddVocabulary = () => {
+  const router = useRouter();
+  const uniqueId = React.useId();
   const [open, setOpen] = React.useState(false);
   const [openChapter, setOpenChapter] = React.useState(false);
   const [addExample, setAddExample] = React.useState(false);
@@ -42,8 +43,8 @@ const AddVocabulary = () => {
   const [selectedChapter, setSelectedChapter] = React.useState<
     undefined | number
   >();
-  const form = useForm<AddVocabularySchemaType>({
-    resolver: zodResolver(addVocabularySchema),
+  const form = useForm<InsertVocabSchemaType>({
+    resolver: zodResolver(insertVocabSchema),
     defaultValues: {
       hangul: "",
       translation: "",
@@ -77,12 +78,14 @@ const AddVocabulary = () => {
     return setAddExample((prevState) => !prevState);
   }
 
-  async function onSubmit(values: AddVocabularySchemaType) {
+  async function onSubmit(values: InsertVocabSchemaType) {
     try {
+      console.time("insert");
       setIsLoading(true);
       await axiosRequest.post("/vocabularies", values);
+
+      router.refresh();
       toast.success("Berhasil ditambahkan", { duration: 2500 });
-      revalidateAction("vocabularies");
     } catch (error: any) {
       const status = error?.response?.status;
       if (status !== 400) {
@@ -92,12 +95,12 @@ const AddVocabulary = () => {
         toast.error("Gagal menambahkan");
       }
     } finally {
+      console.timeEnd("insert");
       setIsLoading(false);
       setOpen(false);
       form.reset();
     }
   }
-
   return (
     <>
       <Button
@@ -202,7 +205,15 @@ const AddVocabulary = () => {
                                           Contoh Kalimat
                                         </FormLabel>
                                         <FormControl className="mt-2">
-                                          <Input {...field} id="sentenceEx" />
+                                          <Input
+                                            {...field}
+                                            value={
+                                              field.value === null
+                                                ? ""
+                                                : field.value
+                                            }
+                                            id="sentenceEx"
+                                          />
                                         </FormControl>
                                       </FormItem>
                                     )}
@@ -218,6 +229,11 @@ const AddVocabulary = () => {
                                         <FormControl className="mt-2">
                                           <Input
                                             {...field}
+                                            value={
+                                              field.value === null
+                                                ? ""
+                                                : field.value
+                                            }
                                             id="translationEx"
                                           />
                                         </FormControl>
@@ -239,6 +255,9 @@ const AddVocabulary = () => {
                                   <FormControl className="mt-2">
                                     <Textarea
                                       {...field}
+                                      value={
+                                        field.value === null ? "" : field.value
+                                      }
                                       placeholder="cth: digunakan untuk memakai dasi"
                                       id="note"
                                       className="resize-none bg-muted"
@@ -270,7 +289,7 @@ const AddVocabulary = () => {
                                         (_, index) => (
                                           <li
                                             className="list-none hover:text-zinc-400 w-full"
-                                            key={createId()}
+                                            key={uniqueId}
                                           >
                                             <button
                                               onClick={() =>
@@ -304,7 +323,13 @@ const AddVocabulary = () => {
                                     Referensi (English)
                                   </FormLabel>
                                   <FormControl className="mt-2">
-                                    <Input {...field} id="reference" />
+                                    <Input
+                                      {...field}
+                                      value={
+                                        field.value === null ? "" : field.value
+                                      }
+                                      id="reference"
+                                    />
                                   </FormControl>
                                   <FormDescription>
                                     Masukan arti dalam Bahasa Inggris sebagai
@@ -333,7 +358,7 @@ const AddVocabulary = () => {
                         {isLoading && (
                           <Loader2Icon
                             size={16}
-                            className="ml-1 text-gray-200 animate-spin"
+                            className="mr-1 text-gray-200 dark:text-emerald-200 animate-spin"
                           />
                         )}
                         {isLoading ? "Save..." : "Save"}

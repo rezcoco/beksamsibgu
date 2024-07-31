@@ -11,39 +11,40 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { VocabulariesType } from "@/types/type";
 import { axiosRequest } from "@/lib/axios";
 import toast from "react-hot-toast";
-import { revalidateAction } from "@/lib/actions";
 import { SelectVocabType } from "@/drizzle/schema";
+import { useRouter } from "next/navigation";
 
 const VocabActions: React.FC<{
   data: SelectVocabType;
 }> = ({ data }) => {
   const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
+  const router = useRouter();
+
   async function onDeleteVocab() {
+    console.time("delete");
     setIsDeleteLoading(true);
     const toastId = toast.loading("Menunggu...");
 
     try {
       await axiosRequest.delete(`/vocabularies?id=${data.id}`);
-      await revalidateAction("vocabularies");
+      router.refresh();
 
-      toast.dismiss(toastId);
-      toast.success("Sukses dihapus");
+      toast.success("Berhasil dihapus", { id: toastId });
     } catch (error: any) {
       console.error(error);
       const status = error?.response?.status;
-      toast.dismiss(toastId);
 
-      if (status !== 400) {
-        toast.error("Something went wrong");
-      } else if (status === 404) {
-        toast.error("Kosa kata tidak ditemukan");
+      if (status === 404) {
+        toast.error("Kosa kata tidak ditemukan", { id: toastId });
       } else if (status === 400) {
-        toast.error("Bad Request");
+        toast.error("Bad Request", { id: toastId });
+      } else {
+        toast.error("Something went wrong", { id: toastId });
       }
     } finally {
+      console.timeEnd("delete");
       setIsDeleteLoading(false);
     }
   }
