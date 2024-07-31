@@ -1,4 +1,3 @@
-import { AddVocabularySchemaType } from "@/lib/validation"
 import { RankingInfo } from "@tanstack/match-sorter-utils"
 import { FilterFn } from "@tanstack/react-table"
 
@@ -10,8 +9,4 @@ declare module '@tanstack/react-table' {
   interface FilterMeta {
     itemRank: RankingInfo
   }
-}
-
-export type VocabulariesType = AddVocabularySchemaType & {
-  id: string
 }
