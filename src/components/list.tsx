@@ -30,7 +30,7 @@ const List = async () => {
                 </div>
                 <VocabActions data={value} />
               </div>
-              <p className="text-sm text-zinc-500 line-clamp-2">
+              <p className="text-sm text-zinc-500 line-clamp-1">
                 {value.translation}
               </p>
               <Badge
@@ -41,7 +41,7 @@ const List = async () => {
               </Badge>
             </div>
             <Link
-              href="/"
+              href={`/kosa-kata/${value.id}`}
               className="bg-white dark:bg-zinc-700 rounded-b-lg px-4 py-2 sm:px-6 flex justify-between items-center"
             >
               <p className="text-xs text-muted-foreground">
