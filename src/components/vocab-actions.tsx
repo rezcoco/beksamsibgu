@@ -14,13 +14,11 @@ import {
 import { axiosRequest } from "@/lib/axios";
 import toast from "react-hot-toast";
 import { SelectVocabType } from "@/drizzle/schema";
-import { useRouter } from "next/navigation";
 
 const VocabActions: React.FC<{
   data: SelectVocabType;
 }> = ({ data }) => {
   const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
-  const router = useRouter();
 
   async function onDeleteVocab() {
     console.time("delete");
@@ -29,7 +27,6 @@ const VocabActions: React.FC<{
 
     try {
       await axiosRequest.delete(`/vocabularies?id=${data.id}`);
-      router.refresh();
 
       toast.success("Berhasil dihapus", { id: toastId });
     } catch (error: any) {
