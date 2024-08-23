@@ -1,5 +1,3 @@
-import { declarative_past_formal_high, declarative_past_informal_high, declarative_present_formal_high, declarative_present_informal_high } from "./korean/conjugations/declarative";
-
 const leadingConsonants = ['ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ᄋ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
 const vowels = ['ㅏ', 'ㅐ', 'ㅑ', 'ㅒ', 'ㅓ', 'ㅔ', 'ㅕ', 'ㅖ', 'ㅗ', 'ㅘ', 'ㅙ', 'ㅚ', 'ㅛ', 'ㅜ', 'ㅝ', 'ㅞ', 'ㅟ', 'ㅠ', 'ㅡ', 'ㅢ', 'ㅣ']
 const trailingConsonants = [null, 'ㄱ', 'ㄲ', 'ㄳ', 'ㄴ', 'ㄵ', 'ㄶ', 'ㄷ', 'ㄹ', 'ㄺ', 'ㄻ', 'ㄼ', 'ㄽ', 'ㄾ', 'ㄿ', 'ㅀ', 'ㅁ', 'ㅂ', 'ㅄ', 'ㅅ', 'ㅆ', 'ᄋ', 'ㅈ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ']
@@ -59,14 +57,4 @@ export function decomposeHangul(syllable: string) {
     vowel: vowels[vowelIndex],
     trailingConsonant: trailingConsonants[trailingIndex]
   };
-}
-
-export function generateConjugation(hangeul: string, regular: boolean) {
-  const declarativePresentInfHigh = declarative_present_informal_high(hangeul, regular)
-
-  return {
-    declarative: {
-      declarativePresentInfHigh,
-    }
-  }
 }
