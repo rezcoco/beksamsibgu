@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { forwardRef } from "react";
 import Link from "next/link";
 import clsx from "clsx";
@@ -14,7 +15,16 @@ import {
 } from "@/components/mobile-navigation";
 import { MobileSearch, Search } from "@/components/search";
 import { ThemeToggle } from "@/components/theme-toggle";
-
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
+import { dark } from "@clerk/themes";
+import { useTheme } from "next-themes";
+import {
+  NotificationFeedPopover,
+  NotificationIconButton,
+} from "@knocklabs/react";
+import "@knocklabs/react/dist/index.css";
+import KnockFeed from "./knock-feed";
 function TopLevelNavItem({
   href,
   children,
@@ -26,7 +36,7 @@ function TopLevelNavItem({
     <li>
       <Link
         href={href}
-        className="text-sm leading-5 text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+        className="text-sm leading-5 text-zinc-700 dark:text-zinc-400 transition hover:text-zinc-900text-zinc-700 dark:hover:text-white"
       >
         {children}
       </Link>
@@ -38,12 +48,16 @@ export const Header = forwardRef<
   React.ElementRef<"div">,
   React.ComponentPropsWithoutRef<typeof motion.div>
 >(function Header({ className, ...props }, ref) {
-  let { isOpen: mobileNavIsOpen } = useMobileNavigationStore();
-  let isInsideMobileNavigation = useIsInsideMobileNavigation();
+  const { isOpen: mobileNavIsOpen } = useMobileNavigationStore();
+  const isInsideMobileNavigation = useIsInsideMobileNavigation();
+  const pathname = usePathname();
+  const { resolvedTheme } = useTheme();
+  const [isVisible, setIsVisible] = React.useState(false);
+  const notifButtonRef = React.useRef(null);
 
-  let { scrollY } = useScroll();
-  let bgOpacityLight = useTransform(scrollY, [0, 72], [0.5, 0.9]);
-  let bgOpacityDark = useTransform(scrollY, [0, 72], [0.2, 0.8]);
+  const { scrollY } = useScroll();
+  const bgOpacityLight = useTransform(scrollY, [0, 72], [0.5, 0.9]);
+  const bgOpacityDark = useTransform(scrollY, [0, 72], [0.2, 0.8]);
 
   return (
     <motion.div
@@ -51,7 +65,7 @@ export const Header = forwardRef<
       ref={ref}
       className={clsx(
         className,
-        "fixed inset-x-0 top-0 z-[45] flex h-14 items-center justify-between gap-12 px-4 transition sm:px-6 lg:left-72 lg:z-30 lg:px-8 xl:left-80",
+        "fixed inset-x-0 top-0 z-[45] flex h-14 items-center justify-between gap-12 px-6 transition lg:left-72 lg:z-30 lg:px-8 xl:left-80",
         !isInsideMobileNavigation &&
           "backdrop-blur-sm lg:left-72 xl:left-80 dark:backdrop-blur",
         isInsideMobileNavigation
@@ -75,25 +89,41 @@ export const Header = forwardRef<
       <Search />
       <div className="flex items-center gap-5 lg:hidden">
         <MobileNavigation />
-        <Link href="/" aria-label="Home">
+        <Link className="hidden md:block" href="/" aria-label="Home">
           <Logo className="h-6" />
         </Link>
       </div>
-      <div className="flex items-center gap-5">
+      <div className="flex items-center">
         <nav className="hidden md:block">
           <ul role="list" className="flex items-center gap-8">
-            <TopLevelNavItem href="/">API</TopLevelNavItem>
             <TopLevelNavItem href="#">Documentation</TopLevelNavItem>
             <TopLevelNavItem href="#">Support</TopLevelNavItem>
           </ul>
         </nav>
-        <div className="hidden md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15" />
+        <div className="hidden mx-5 md:block md:h-5 md:w-px md:bg-zinc-900/10 md:dark:bg-white/15" />
         <div className="flex gap-4">
           <MobileSearch />
           <ThemeToggle />
         </div>
-        <div className="hidden min-[416px]:contents">
-          <Button href="#">Sign in</Button>
+        <div>
+          <SignedIn>
+            <div className="ml-5 gap-5 flex items-center">
+              <KnockFeed />
+              <UserButton
+                appearance={{
+                  baseTheme: resolvedTheme === "dark" ? dark : undefined,
+                }}
+              />
+            </div>
+          </SignedIn>
+          <SignedOut>
+            <Button
+              className="hidden md:block ml-5"
+              href={`/auth/sign-in?redirectUrl=${pathname}`}
+            >
+              Sign in
+            </Button>
+          </SignedOut>
         </div>
       </div>
     </motion.div>

@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { ThemeProvider, useTheme } from "next-themes";
 import { QueryClientProvider, QueryClient } from "react-query";
+import { ClerkProvider } from "@clerk/nextjs";
 
 function ThemeWatcher() {
   let { resolvedTheme, setTheme } = useTheme();
@@ -31,11 +32,13 @@ function ThemeWatcher() {
 export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" disableTransitionOnChange>
-        <ThemeWatcher />
-        {children}
-      </ThemeProvider>
-    </QueryClientProvider>
+    <ThemeProvider attribute="class" disableTransitionOnChange>
+      <ClerkProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeWatcher />
+          {children}
+        </QueryClientProvider>
+      </ClerkProvider>
+    </ThemeProvider>
   );
 }

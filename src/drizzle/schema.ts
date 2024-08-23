@@ -8,6 +8,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { z } from 'zod';
 import { createInsertSchema } from 'drizzle-zod';
+import { relations } from "drizzle-orm";
 
 
 export const createId = init({
@@ -31,10 +32,8 @@ export const usersTable = pgTable("users", {
 })
 
 export const vocabulariesTable = pgTable("vocabularies", {
-  id: varchar("id").primaryKey().$defaultFn(() => {
-    return createId()
-  }).notNull(),
-  hangul: varchar("varchar").notNull(),
+  id: varchar("id").primaryKey().$defaultFn(() => createId()).notNull(),
+  hangeul: varchar("varchar").notNull(),
   translation: varchar("translation").notNull(),
   chapter: integer("chapter"),
   reference: varchar("reference"),
@@ -44,7 +43,18 @@ export const vocabulariesTable = pgTable("vocabularies", {
   audioUrl: varchar("audioUrl"),
   // userId: varchar("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().$onUpdate(() => new Date())
+  updatedAt: timestamp("updated_at").notNull().$onUpdate(() => new Date()),
+  conjugationId: varchar("conjugations").references(() => conjugatesTable.id)
+})
+
+export const vocabulariesTableReferences = relations(vocabulariesTable, ({ one }) => ({
+  conjugations: one(conjugatesTable)
+}))
+
+export const conjugatesTable = pgTable("conjugates", {
+  id: varchar("id").primaryKey().$defaultFn(() => createId()).notNull(),
+  hangeul: varchar("hangeul").notNull(),
+  audioUrl: varchar("audioUrl")
 })
 
 export const insertUserSchema = createInsertSchema(usersTable, {
@@ -56,7 +66,7 @@ export const insertUserSchema = createInsertSchema(usersTable, {
 })
 
 export const insertVocabSchema = createInsertSchema(vocabulariesTable, {
-  hangul: z.string().min(1, "Hangul tidak boleh kosong"),
+  hangeul: z.string().min(1, "Hangul tidak boleh kosong"),
   translation: z.string().min(1, "Arti tidak boleh kosong"),
   chapter: z.number().min(1).max(60).optional(),
   reference: (schema) => schema.reference.optional(),

@@ -1,16 +1,15 @@
 "use client";
 
-import { useRef } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { AnimatePresence, motion, useIsPresent } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import { Button } from "@/components/button";
 import { useIsInsideMobileNavigation } from "@/components/mobile-navigation";
-// import { useSectionStore } from "@/components/section-provider";
 import { Tag } from "@/components/tag";
 import { remToPx } from "@/lib/rem-to-px";
+import { SignedIn, SignedOut, useAuth, UserButton } from "@clerk/nextjs";
 
 interface NavGroup {
   title: string;
@@ -18,11 +17,6 @@ interface NavGroup {
     title: string;
     href: string;
   }>;
-}
-
-function useInitialValue<T>(value: T, condition = true) {
-  let initialValue = useRef(value).current;
-  return condition ? initialValue : value;
 }
 
 function TopLevelNavItem({
@@ -36,7 +30,7 @@ function TopLevelNavItem({
     <li className="md:hidden">
       <Link
         href={href}
-        className="block py-1 text-sm text-zinc-600 transition hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+        className="block py-1 text-sm text-zinc-700 dark:text-zinc-400 transition hover:text-zinc-900 dark:hover:text-white"
       >
         {children}
       </Link>
@@ -66,7 +60,7 @@ function NavLink({
         isAnchorLink ? "pl-7" : "pl-4",
         active
           ? "text-zinc-900 dark:text-white"
-          : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+          : "text-zinc-700 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
       )}
     >
       <span className="truncate">{children}</span>
@@ -163,33 +157,20 @@ function NavigationGroup({
 
 export const navigation: Array<NavGroup> = [
   {
-    title: "Guides",
+    title: "Home",
     links: [
       { title: "Introduction", href: "/" },
       { title: "Kosa Kata", href: "/kosa-kata" },
-      { title: "SDKs", href: "/sdks" },
-      { title: "Authentication", href: "/authentication" },
-      { title: "Pagination", href: "/pagination" },
-      { title: "Errors", href: "/errors" },
-      { title: "Webhooks", href: "/webhooks" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { title: "Contacts", href: "/contacts" },
-      { title: "Conversations", href: "/conversations" },
-      { title: "Messages", href: "/messages" },
-      { title: "Groups", href: "/groups" },
-      { title: "Attachments", href: "/attachments" },
     ],
   },
 ];
 
 export function Navigation(props: React.ComponentPropsWithoutRef<"nav">) {
+  const pathname = usePathname();
+
   return (
-    <nav {...props}>
-      <ul role="list">
+    <nav className="min-h-full" {...props}>
+      <ul className="min-h-full" role="list">
         <TopLevelNavItem href="/">API</TopLevelNavItem>
         <TopLevelNavItem href="#">Documentation</TopLevelNavItem>
         <TopLevelNavItem href="#">Support</TopLevelNavItem>
@@ -200,11 +181,17 @@ export function Navigation(props: React.ComponentPropsWithoutRef<"nav">) {
             className={groupIndex === 0 ? "md:mt-0" : ""}
           />
         ))}
-        <li className="sticky bottom-0 z-10 mt-6 min-[416px]:hidden">
-          <Button href="#" variant="filled" className="w-full">
-            Sign in
-          </Button>
-        </li>
+        <SignedOut>
+          <li className="sticky md:hidden bottom-0 z-10 mt-6">
+            <Button
+              href={`/auth/sign-in?redirectUrl=${pathname}`}
+              variant="filled"
+              className="w-full"
+            >
+              Sign in
+            </Button>
+          </li>
+        </SignedOut>
       </ul>
     </nav>
   );

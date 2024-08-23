@@ -28,31 +28,39 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
-import { axiosRequest } from "@/lib/axios";
+import useFetch from "@/hooks/use-fetch";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { insertVocabSchema, InsertVocabSchemaType } from "@/drizzle/schema";
+import { insertVocabSchema, InsertVocabType } from "@/lib/validation";
+import { useAuth } from "@clerk/nextjs";
+import { revalidate } from "@/lib/actions";
 
 const AddVocabulary = () => {
   const router = useRouter();
+  const request = useFetch();
+  const { isSignedIn, userId } = useAuth();
   const uniqueId = React.useId();
   const [open, setOpen] = React.useState(false);
   const [openChapter, setOpenChapter] = React.useState(false);
   const [addExample, setAddExample] = React.useState(false);
+  const [addPredicate, setAddPredicate] = React.useState(false);
+  const [isRegular, setIsRegular] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
   const [selectedChapter, setSelectedChapter] = React.useState<
     undefined | number
   >();
-  const form = useForm<InsertVocabSchemaType>({
+  const form = useForm<InsertVocabType>({
     resolver: zodResolver(insertVocabSchema),
     defaultValues: {
-      hangul: "",
+      hangeul: "",
       translation: "",
       note: "",
       sentenceEx: "",
       translationEx: "",
       reference: "",
       chapter: undefined,
+      isRegular: true,
+      predicate: "",
     },
   });
 
@@ -75,28 +83,68 @@ const AddVocabulary = () => {
   }
 
   function onSwitchChange() {
-    return setAddExample((prevState) => !prevState);
+    setAddExample((prevState) => !prevState);
+    form.resetField("sentenceEx");
+    return form.resetField("translationEx");
   }
 
-  async function onSubmit(values: InsertVocabSchemaType) {
+  function onSwitchConjugationChange() {
+    setAddPredicate((prevState) => !prevState);
+    form.resetField("predicate");
+    form.resetField("isRegular");
+    return setIsRegular(true);
+  }
+
+  function onSwitchRegularChange() {
+    return setIsRegular((prevState) => {
+      form.setValue("isRegular", !prevState);
+      return !prevState;
+    });
+  }
+
+  function onAddButtonClicked() {
+    if (!isSignedIn) {
+      return router.push("/auth/sign-in?redirectUrl=" + "/kosa-kata");
+    }
+
+    return setOpen((prevState) => !prevState);
+  }
+
+  async function onSubmit(values: InsertVocabType) {
     try {
       console.time("insert");
       setIsLoading(true);
-      await axiosRequest.post("/vocabularies", values);
+      const axiosRequest = await request();
+      await axiosRequest.post("/vocabularies", {
+        hangeul: values.hangeul || undefined,
+        translation: values.translation || undefined,
+        note: values.note || undefined,
+        sentenceEx: values.sentenceEx || undefined,
+        translationEx: values.translationEx || undefined,
+        reference: values.reference || undefined,
+        chapter: values.chapter,
+        isRegular: values.isRegular,
+        predicate: values.predicate || undefined,
+        authorId: userId,
+      });
 
-      router.refresh();
-      toast.success("Berhasil ditambahkan", { duration: 2500 });
+      await revalidate("vocabularies");
+      toast.success("Berhasil menambahkan", { duration: 2500 });
     } catch (error: any) {
+      let err: Error = error;
       const status = error?.response?.status;
       if (status !== 400) {
         console.log(error);
-        toast.error("Something went wrong");
+        toast.error("Terjadi kesalahan");
       } else {
         toast.error("Gagal menambahkan");
       }
     } finally {
       console.timeEnd("insert");
       setIsLoading(false);
+      setAddExample(false);
+      setAddPredicate(false);
+      setSelectedChapter(undefined);
       setOpen(false);
       form.reset();
     }
@@ -105,7 +153,7 @@ const AddVocabulary = () => {
     <>
       <Button
         variant={"filled"}
-        onClick={() => setOpen((prevState) => !prevState)}
+        onClick={onAddButtonClicked}
         className="h-9 px-6 py-3 w-fit flex items-center max-md:ml-auto"
       >
         Tambahkan Baru
@@ -115,7 +163,7 @@ const AddVocabulary = () => {
 
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
-            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-12 sm:pl-16">
               <DialogPanel
                 transition
                 className="pointer-events-auto w-screen max-w-md transform transition duration-500 ease-in-out data-[closed]:translate-x-full sm:duration-700"
@@ -145,8 +193,8 @@ const AddVocabulary = () => {
                         </div>
                         <div className="mt-1">
                           <p className="text-sm text-emerald-100">
-                            Get started by filling in the information below to
-                            create your new project.
+                            Mulai tambahkan kosa kata dengan mengisi informasi
+                            yang diperlukan.
                           </p>
                         </div>
                       </div>
@@ -155,19 +203,66 @@ const AddVocabulary = () => {
                           <div className="space-y-6 pb-5 pt-6">
                             <FormField
                               control={form.control}
-                              name="hangul"
+                              name="hangeul"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel htmlFor="hangul">Hangul</FormLabel>
+                                  <FormLabel htmlFor="hangeul">
+                                    Hangeul
+                                  </FormLabel>
                                   <FormControl className="mt-2">
-                                    <Input {...field} id="hangul" />
+                                    <Input {...field} id="hangeul" />
                                   </FormControl>
                                   <FormMessage>
-                                    {form.formState.errors.hangul?.message}
+                                    {form.formState.errors.hangeul?.message}
                                   </FormMessage>
                                 </FormItem>
                               )}
                             />
+                            <div>
+                              <div className="flex gap-2 items-center">
+                                <Switch
+                                  onCheckedChange={onSwitchConjugationChange}
+                                  id="conjugation"
+                                />
+                                <Label htmlFor="conjugation">
+                                  Tambahkan perubahan (oleh sistem)
+                                </Label>
+                              </div>
+                              {addPredicate && (
+                                <div className="pl-6 mt-4">
+                                  <FormField
+                                    control={form.control}
+                                    name="predicate"
+                                    render={({ field }) => (
+                                      <FormItem>
+                                        <FormLabel htmlFor="predicate">
+                                          Predikat (KK/KS)
+                                        </FormLabel>
+                                        <FormControl className="mt-2">
+                                          <Input {...field} id="predicate" />
+                                        </FormControl>
+                                        <FormDescription>
+                                          Predikat akan dirubah secara otomatis
+                                          oleh sistem (optional)
+                                        </FormDescription>
+                                        <FormMessage />
+                                      </FormItem>
+                                    )}
+                                  />
+                                  <div className="flex items-center gap-2 mt-4">
+                                    <Switch
+                                      onCheckedChange={onSwitchRegularChange}
+                                      id="isRegular"
+                                    />
+                                    <Label htmlFor="isRegular">
+                                      {isRegular
+                                        ? "KK/KS Beraturan"
+                                        : "KK/KS Tidak beraturan"}
+                                    </Label>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
                             <FormField
                               control={form.control}
                               name="translation"
@@ -184,7 +279,7 @@ const AddVocabulary = () => {
                               )}
                             />
                             <div className="flex flex-col">
-                              <div className="flex gap-4 items-center">
+                              <div className="flex gap-2 items-center">
                                 <Switch
                                   onCheckedChange={onSwitchChange}
                                   id="sentenceEx"
@@ -288,7 +383,7 @@ const AddVocabulary = () => {
                                       {Array.from({ length: 60 }).map(
                                         (_, index) => (
                                           <li
-                                            className="list-none hover:text-zinc-400 w-full"
+                                            className="list-none hover:text-zinc-700 dark:text-zinc-400 w-full"
                                             key={uniqueId}
                                           >
                                             <button

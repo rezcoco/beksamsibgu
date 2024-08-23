@@ -1,2 +1,2 @@
 export const PRODUCTION_HOSTNAME_URL = process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL
-export const API_BASE_URL = PRODUCTION_HOSTNAME_URL ? new URL("/api", `https://${PRODUCTION_HOSTNAME_URL!}`).toString() : "http://localhost:3000/api"
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL

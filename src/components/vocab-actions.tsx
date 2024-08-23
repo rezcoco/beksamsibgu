@@ -11,16 +11,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { axiosRequest } from "@/lib/axios";
+import { revalidate } from "@/lib/actions";
+import EditVocabulary from "./edit-vocabulary";
 import toast from "react-hot-toast";
-import { SelectVocabType } from "@/drizzle/schema";
-import { useRouter } from "next/navigation";
+import useFetch from "@/hooks/use-fetch";
+import { GetQueryResponseType } from "@/types/type";
 
 const VocabActions: React.FC<{
-  data: SelectVocabType;
+  data: GetQueryResponseType;
 }> = ({ data }) => {
-  const router = useRouter();
+  const request = useFetch();
   const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
+  const [openEdit, setOpenEdit] = React.useState(false);
 
   async function onDeleteVocab() {
     console.time("delete");
@@ -28,9 +30,10 @@ const VocabActions: React.FC<{
     const toastId = toast.loading("Menunggu...");
 
     try {
-      await axiosRequest.delete(`/vocabularies?id=${data.id}`);
+      const axiosRequest = await request();
+      await axiosRequest.delete(`/vocabularies/${data.id}`);
 
-      router.refresh();
+      await revalidate("vocabularies");
       toast.success("Berhasil dihapus", { id: toastId });
     } catch (error: any) {
       console.error(error);
@@ -50,27 +53,34 @@ const VocabActions: React.FC<{
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="h-8 w-8 p-0 hover:bg-zinc-400/10 ml-4"
-        >
-          <span className="sr-only">Open menu</span>
-          <DotsVerticalIcon className="h-4 w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem onClick={onDeleteVocab} disabled={isDeleteLoading}>
-          Hapus
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>Beri masukan</DropdownMenuItem>
-        <DropdownMenuItem>Lapor ke Admin</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            className="h-8 w-8 p-0 hover:bg-zinc-700 dark:text-zinc-400 ml-4"
+          >
+            <span className="sr-only">Open menu</span>
+            <DotsVerticalIcon className="h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem
+            onClick={() => setOpenEdit((prevState) => !prevState)}
+          >
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={onDeleteVocab} disabled={isDeleteLoading}>
+            Hapus
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem>Beri masukan</DropdownMenuItem>
+          <DropdownMenuItem>Lapor ke Admin</DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <EditVocabulary data={data} open={openEdit} setOpen={setOpenEdit} />
+    </>
   );
 };
 

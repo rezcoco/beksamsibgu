@@ -4,50 +4,51 @@ import { ChevronRight, Volume2 } from "lucide-react";
 import Link from "next/link";
 import VocabActions from "./vocab-actions";
 import { Badge } from "./ui/badge";
-import { selectVocabularies } from "@/lib/actions";
+import { fetchData } from "@/lib/queries";
+import { GetQueryResponseType } from "@/types/type";
+import AudioBtn from "./audio-btn";
 
 const List = async () => {
-  const data = await selectVocabularies({});
+  const data: GetQueryResponseType[] = await fetchData("/vocabularies", [
+    "vocabularies",
+  ]);
 
   return (
     <section>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-        {data.map(({ record: value }) => (
+        {data.map((value) => (
           <div
-            key={createId()}
-            className="shadow-sm dark:shadow-none flex-col rounded-lg bg-emerald-50 dark:bg-muted flex"
+            key={value.id}
+            className="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 relative border flex-col rounded-lg bg-white dark:bg-zinc-900 flex"
           >
             <div className="px-4 py-5 sm:p-6">
               <div className="flex justify-between">
                 <div className="flex items-center">
-                  <p className="font-semibold line-clamp-1">{value.hangul}</p>
-                  <button className="hover:bg-zinc-400/10 dark:hover:text-zinc-50/50 rounded-full ml-1 p-1">
-                    <Volume2
-                      className="text-zinc-400 dark:text-blue-200"
-                      size={14}
-                    />
-                  </button>
+                  <p className="font-semibold text-zinc-900 dark:text-white line-clamp-1">
+                    {value.hangeul}
+                  </p>
+                  <AudioBtn />
                 </div>
                 <VocabActions data={value} />
               </div>
-              <p className="text-sm text-zinc-500 line-clamp-1">
+              <p className="text-sm text-zinc-700 dark:text-zinc-400 line-clamp-1">
                 {value.translation}
               </p>
-              <Badge
-                variant={"outline"}
-                className="mt-2 text-[11px] rounded-md border-zinc-300"
-              >
+              <Badge className="mt-2 text-[11px] rounded-md bg-emerald-500 text-white dark">
                 {value.chapter ? `Bab ${value.chapter}` : "Acak"}
               </Badge>
             </div>
             <Link
               href={`/kosa-kata/${value.id}`}
-              className="bg-white dark:bg-zinc-700 rounded-b-lg px-4 py-2 sm:px-6 flex justify-between items-center"
+              className="border-t border-muted dark:bg-zinc-900 rounded-b-lg px-4 py-2 sm:px-6 flex justify-between items-center"
             >
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-zinc-700 dark:text-zinc-400">
                 Lihat selengkapnya
               </p>
-              <ChevronRight size={16} className="text-muted-foreground" />
+              <ChevronRight
+                size={16}
+                className="text-zinc-700 dark:text-zinc-400"
+              />
             </Link>
           </div>
         ))}
