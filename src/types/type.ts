@@ -64,7 +64,8 @@ export type GetQueryResponseByIdType = {
     }>
   }>
   author: {
-    name: string
+    firstName: string
+    lastName: string
     username: string
   }
 }

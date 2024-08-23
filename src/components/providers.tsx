@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { ThemeProvider, useTheme } from "next-themes";
 import { QueryClientProvider, QueryClient } from "react-query";
 import { ClerkProvider } from "@clerk/nextjs";
+import { usePathname } from "next/navigation";
 
 function ThemeWatcher() {
   let { resolvedTheme, setTheme } = useTheme();
@@ -31,9 +32,11 @@ function ThemeWatcher() {
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const queryClient = new QueryClient();
+  const pathname = usePathname();
+
   return (
     <ThemeProvider attribute="class" disableTransitionOnChange>
-      <ClerkProvider>
+      <ClerkProvider afterSignOutUrl={pathname}>
         <QueryClientProvider client={queryClient}>
           <ThemeWatcher />
           {children}

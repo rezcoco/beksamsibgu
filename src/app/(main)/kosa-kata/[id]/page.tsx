@@ -108,7 +108,7 @@ const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
             className="capitalize underline"
             href={`/profile/${data.author.username}`}
           >
-            {data.author.name}
+            {`${data.author.firstName} ${data.author.lastName}`}
           </Link>
         </p>
       </div>
