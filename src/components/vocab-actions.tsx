@@ -63,7 +63,7 @@ const VocabActions: React.FC<{
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="h-8 w-8 p-0 hover:bg-zinc-700 dark:text-zinc-400 ml-4"
+            className="h-8 w-8 p-0 hover:bg-zinc-400/10 ml-4"
           >
             <span className="sr-only">Open menu</span>
             <DotsVerticalIcon className="h-4 w-4" />

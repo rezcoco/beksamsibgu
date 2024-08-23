@@ -282,7 +282,9 @@ const SearchInput = forwardRef<
           "flex-auto appearance-none bg-transparent pl-10 text-zinc-900 outline-none placeholder:text-zinc-700 focus:w-full placeholder:dark:text-zinc-400 focus:flex-none sm:text-sm dark:text-white [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-decoration]:hidden [&::-webkit-search-results-button]:hidden [&::-webkit-search-results-decoration]:hidden",
           autocompleteState.status === "stalled" ? "pr-11" : "pr-4"
         )}
-        {...inputProps}
+        value={inputProps.value}
+        onChange={inputProps.onChange}
+        placeholder={inputProps.placeholder}
         onKeyDown={(event) => {
           if (
             event.key === "Escape" &&
