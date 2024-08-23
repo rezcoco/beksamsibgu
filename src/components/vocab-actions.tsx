@@ -16,6 +16,7 @@ import EditVocabulary from "./edit-vocabulary";
 import toast from "react-hot-toast";
 import useFetch from "@/hooks/use-fetch";
 import { GetQueryResponseType } from "@/types/type";
+import { useUser } from "@clerk/nextjs";
 
 const VocabActions: React.FC<{
   data: GetQueryResponseType;
@@ -23,6 +24,10 @@ const VocabActions: React.FC<{
   const request = useFetch();
   const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
+  const { user } = useUser();
+  const role = user?.publicMetadata.role;
+  const userId = user?.id;
+  const allowedRoles = ["admin", "superuser"];
 
   async function onDeleteVocab() {
     console.time("delete");
@@ -66,14 +71,22 @@ const VocabActions: React.FC<{
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem
-            onClick={() => setOpenEdit((prevState) => !prevState)}
-          >
-            Edit
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={onDeleteVocab} disabled={isDeleteLoading}>
-            Hapus
-          </DropdownMenuItem>
+          {(data.authorId === userId ||
+            allowedRoles.includes(role as string)) && (
+            <>
+              <DropdownMenuItem
+                onClick={() => setOpenEdit((prevState) => !prevState)}
+              >
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={onDeleteVocab}
+                disabled={isDeleteLoading}
+              >
+                Hapus
+              </DropdownMenuItem>
+            </>
+          )}
           <DropdownMenuSeparator />
           <DropdownMenuItem>Beri masukan</DropdownMenuItem>
           <DropdownMenuItem>Lapor ke Admin</DropdownMenuItem>
