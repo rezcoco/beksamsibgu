@@ -26,7 +26,6 @@ const KnockFeed: React.FC<PropsWithChildren> = ({ children }) => {
       <KnockFeedProvider
         feedId={process.env.NEXT_PUBLIC_KNOCK_FEED_CHANNEL_ID!}
       >
-        <NotificationToaster userId={userId} />
         <NotificationIconButton
           onClick={(e) => setIsVisible(!isVisible)}
           ref={notifButtonRef}

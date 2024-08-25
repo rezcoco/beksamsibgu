@@ -30,7 +30,7 @@ export default function RootLayout({
         <Providers>
           <div className="w-full">
             {children}
-            {/* <Toaster /> */}
+            <Toaster />
           </div>
         </Providers>
       </body>
