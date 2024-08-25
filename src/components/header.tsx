@@ -50,10 +50,8 @@ export const Header = forwardRef<
 >(function Header({ className, ...props }, ref) {
   const { isOpen: mobileNavIsOpen } = useMobileNavigationStore();
   const isInsideMobileNavigation = useIsInsideMobileNavigation();
-  const pathname = usePathname();
   const { resolvedTheme } = useTheme();
-  const [isVisible, setIsVisible] = React.useState(false);
-  const notifButtonRef = React.useRef(null);
+  const pathname = usePathname();
 
   const { scrollY } = useScroll();
   const bgOpacityLight = useTransform(scrollY, [0, 72], [0.5, 0.9]);
@@ -107,7 +105,7 @@ export const Header = forwardRef<
         </div>
         <div>
           <SignedIn>
-            <div className="ml-5 gap-5 flex items-center">
+            <div className="ml-4 gap-5 flex items-center">
               <KnockFeed />
               <UserButton
                 appearance={{

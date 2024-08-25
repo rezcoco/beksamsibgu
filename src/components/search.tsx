@@ -10,7 +10,6 @@ import {
   useState,
 } from "react";
 import Highlighter from "react-highlight-words";
-import algoliasearch from "algoliasearch";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   type AutocompleteApi,
@@ -22,6 +21,7 @@ import { getAlgoliaResults } from "@algolia/autocomplete-preset-algolia";
 import { Dialog, DialogPanel, DialogBackdrop } from "@headlessui/react";
 import clsx from "clsx";
 import { disassemble } from "hangeul-js";
+import searchClient from "@/lib/algolia";
 
 type EmptyObject = Record<string, never>;
 type Result = {
@@ -39,10 +39,6 @@ type Autocomplete = AutocompleteApi<
 >;
 
 function useAutocomplete({ close }: { close: () => void }) {
-  const searchClient = algoliasearch(
-    "Z21JPI49ZU",
-    "3f9d37715b4c995c94b044a3f72061f3"
-  );
   let id = useId();
   let router = useRouter();
   let [autocompleteState, setAutocompleteState] = useState<

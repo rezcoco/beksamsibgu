@@ -7,7 +7,7 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
-import { Check, Loader2Icon, XIcon } from "lucide-react";
+import { Check, LoaderCircle, XIcon } from "lucide-react";
 import { Button } from "./button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
@@ -34,18 +34,24 @@ import toast from "react-hot-toast";
 import { insertVocabSchema, InsertVocabType } from "@/lib/validation";
 import { useAuth } from "@clerk/nextjs";
 import { revalidate } from "@/lib/actions";
+import searchClient from "@/lib/algolia";
+import Link from "next/link";
+import { createId } from "@paralleldrive/cuid2";
 
 const AddVocabulary = () => {
   const router = useRouter();
   const request = useFetch();
   const { isSignedIn, userId } = useAuth();
-  const uniqueId = React.useId();
   const [open, setOpen] = React.useState(false);
   const [openChapter, setOpenChapter] = React.useState(false);
   const [addExample, setAddExample] = React.useState(false);
   const [addPredicate, setAddPredicate] = React.useState(false);
   const [isRegular, setIsRegular] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isSearch, setIsSearch] = React.useState(false);
+  const [existingVocabId, setExistingVocabId] = React.useState<
+    string | undefined
+  >();
   const [selectedChapter, setSelectedChapter] = React.useState<
     undefined | number
   >();
@@ -63,6 +69,31 @@ const AddVocabulary = () => {
       predicate: "",
     },
   });
+
+  async function vocabSearch(query: string) {
+    console.log(query, existingVocabId);
+    if (query.length > 0) {
+      const index = searchClient.initIndex("beksamsibgu");
+      try {
+        setIsSearch(true);
+        const searchResult = await index.search<{
+          hangeul: string;
+        }>(`${query}`, {
+          filters: `hangeul:${query}`,
+        });
+
+        console.log(searchResult.nbHits);
+
+        if (searchResult.hits.length > 0) {
+          setExistingVocabId(searchResult.hits[0].objectID);
+        } else {
+          setExistingVocabId(undefined);
+        }
+      } finally {
+        setIsSearch(false);
+      }
+    }
+  }
 
   function onChapterSelect(value: number) {
     const storedValue = form.getValues("chapter");
@@ -131,7 +162,6 @@ const AddVocabulary = () => {
       await revalidate("vocabularies");
       toast.success("Berhasil menambahkan", { duration: 2500 });
     } catch (error: any) {
-      let err: Error = error;
       const status = error?.response?.status;
       if (status !== 400) {
         console.log(error);
@@ -149,6 +179,7 @@ const AddVocabulary = () => {
       form.reset();
     }
   }
+
   return (
     <>
       <Button
@@ -210,11 +241,44 @@ const AddVocabulary = () => {
                                     Hangeul
                                   </FormLabel>
                                   <FormControl className="mt-2">
-                                    <Input {...field} id="hangeul" />
+                                    <div className="relative">
+                                      <Input
+                                        {...field}
+                                        value={field.value}
+                                        onChange={(event) => {
+                                          field.onChange(event);
+                                          vocabSearch(event.target.value);
+                                        }}
+                                        id="hangeul"
+                                      />
+                                      {isSearch && (
+                                        <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                                          <LoaderCircle
+                                            size={20}
+                                            className="animate-spin stroke-emerald-500 "
+                                          />
+                                        </div>
+                                      )}
+                                    </div>
                                   </FormControl>
-                                  <FormMessage>
-                                    {form.formState.errors.hangeul?.message}
-                                  </FormMessage>
+                                  {form.formState.errors.hangeul ? (
+                                    <FormMessage>
+                                      {form.formState.errors.hangeul?.message}
+                                    </FormMessage>
+                                  ) : (
+                                    existingVocabId && (
+                                      <p className="text-sm font-medium text-destructive">
+                                        {`Kosa kota sudah ditambahkan`}{" "}
+                                        <Link
+                                          target="_blank"
+                                          className="underline"
+                                          href={`/kosa-kata/${existingVocabId}`}
+                                        >
+                                          di sini
+                                        </Link>
+                                      </p>
+                                    )
+                                  )}
                                 </FormItem>
                               )}
                             />
@@ -225,7 +289,7 @@ const AddVocabulary = () => {
                                   id="conjugation"
                                 />
                                 <Label htmlFor="conjugation">
-                                  Tambahkan perubahan (oleh sistem)
+                                  Tambahkan perubahan (otomatis)
                                 </Label>
                               </div>
                               {addPredicate && (
@@ -384,7 +448,7 @@ const AddVocabulary = () => {
                                         (_, index) => (
                                           <li
                                             className="list-none hover:text-zinc-700 dark:text-zinc-400 w-full"
-                                            key={uniqueId}
+                                            key={createId()}
                                           >
                                             <button
                                               onClick={() =>
@@ -451,7 +515,7 @@ const AddVocabulary = () => {
                         className="h-9 px-5 py-3 rounded-md flex items-center ml-4"
                       >
                         {isLoading && (
-                          <Loader2Icon
+                          <LoaderCircle
                             size={16}
                             className="mr-1 text-gray-200 dark:text-emerald-200 animate-spin"
                           />

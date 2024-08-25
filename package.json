@@ -16,6 +16,7 @@
     "@headlessui/react": "^2.1.2",
     "@headlessui/tailwindcss": "^0.2.1",
     "@hookform/resolvers": "^3.9.0",
+    "@knocklabs/node": "^0.6.13",
     "@knocklabs/react": "^0.2.26",
     "@next/env": "^14.2.5",
     "@paralleldrive/cuid2": "^2.2.2",

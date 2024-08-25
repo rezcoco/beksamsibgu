@@ -1,17 +1,4 @@
-import { RankingInfo } from "@tanstack/match-sorter-utils"
-import { FilterFn } from "@tanstack/react-table"
-
-declare module '@tanstack/react-table' {
-  //add fuzzy filter to the filterFns
-  interface FilterFns {
-    fuzzy: FilterFn<unknown>
-  }
-  interface FilterMeta {
-    itemRank: RankingInfo
-  }
-}
-
-export type GetQueryResponseType = {
+export type GetQueryVocabType = {
   id: string
   hangeul: string
   translation: string
@@ -30,7 +17,7 @@ export type GetQueryResponseType = {
   updatedAt: string
 }
 
-export type GetQueryResponseByIdType = {
+export type GetQueryVocabByIdType = {
   id: string
   hangeul: string
   translation: string
@@ -40,6 +27,8 @@ export type GetQueryResponseByIdType = {
   translationEx: string | null
   predicate: string | null
   isRegular: number
+  isAdj: number
+  isConjugated: number
   romanization: string
   pronunciation: string
   note: string | null
@@ -47,28 +36,28 @@ export type GetQueryResponseByIdType = {
   authorId: string
   createdAt: string
   updatedAt: string
-  conjugationTypes: Array<{
-    id: string
-    type: string
-    conjugations: Array<{
-      id: string
-      conjugated: string | undefined
-      conjugation: boolean
-      romanization: string | undefined
-      pronunciation: string | undefined
-      type: TConjugationTypeValue
-      tense: TConjugationTenseValue | null
-      speechLevel: TSpeechLevelValue | null
-      createdAt: string,
-      updatedAt: string
-    }>
-  }>
   author: {
     firstName: string
     lastName: string
     username: string
   }
 }
+
+export type GetQueryConjugationType = Array<{
+  type: string
+  conjugations: Array<{
+    id: string
+    conjugated: string | undefined
+    conjugation: boolean
+    romanization: string | undefined
+    pronunciation: string | undefined
+    type: TConjugationTypeValue
+    tense: TConjugationTenseValue | null
+    speechLevel: TSpeechLevelValue | null
+    createdAt: string,
+    updatedAt: string
+  }>
+}>
 
 export const CONJUGATION_TYPE = {
   declarative_present: "declarative present",

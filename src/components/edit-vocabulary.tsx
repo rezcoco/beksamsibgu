@@ -31,14 +31,14 @@ import { Label } from "./ui/label";
 import { insertVocabSchema, InsertVocabType } from "@/lib/validation";
 import { useAuth } from "@clerk/nextjs";
 import { revalidate } from "@/lib/actions";
-import { GetQueryResponseType } from "@/types/type";
+import { GetQueryVocabType } from "@/types/type";
 import useFetch from "@/hooks/use-fetch";
 import toast from "react-hot-toast";
 
 type EditVocabularyProps = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  data: GetQueryResponseType;
+  data: GetQueryVocabType;
 };
 
 const EditVocabulary: React.FC<EditVocabularyProps> = ({
@@ -119,6 +119,7 @@ const EditVocabulary: React.FC<EditVocabularyProps> = ({
       console.time("update");
       setIsLoading(true);
       const axiosRequest = await request();
+      console.log(values);
       await axiosRequest.put(
         `/vocabularies/${data.id}`,
         Object.assign(values, {
@@ -365,7 +366,7 @@ const EditVocabulary: React.FC<EditVocabularyProps> = ({
                               onOpenChange={setOpenChapter}
                             >
                               <PopoverTrigger asChild>
-                                <button className="px-4 flex bg-muted justify-between items-center w-[180px] rounded-md text-sm font-medium transition py-1 text-zinc-700 ring-1 ring-inset ring-zinc-900/10 hover:bg-zinc-900/2.5 hover:text-zinc-900 dark:text-zinc-700 dark:text-zinc-400 dark:ring-white/10 dark:hover:bg-white/5 dark:hover:text-white">
+                                <button className="px-4 flex bg-muted justify-between items-center w-[180px] rounded-md text-sm font-medium transition py-1 text-zinc-700 ring-1 ring-inset ring-zinc-900/10 hover:bg-zinc-900/2.5 hover:text-zinc-900 dark:text-zinc-400 dark:ring-white/10 dark:hover:bg-white/5 dark:hover:text-white">
                                   {selectedChapter === undefined
                                     ? "Pilih Bab"
                                     : selectedChapter}

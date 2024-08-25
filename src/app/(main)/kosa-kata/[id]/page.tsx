@@ -2,18 +2,18 @@ import React from "react";
 import AudioBtn from "@/components/audio-btn";
 import Link from "next/link";
 import { fetchData } from "@/lib/queries";
-import { GetQueryResponseByIdType } from "@/types/type";
+import { GetQueryVocabByIdType } from "@/types/type";
 import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import FloatSeparator from "@/components/float-separator";
 import { format } from "date-fns";
 import { id as ina } from "date-fns/locale";
+import Conjugations from "@/components/conjugations";
 
 const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
-  const data: GetQueryResponseByIdType = await fetchData(
+  const data: GetQueryVocabByIdType = await fetchData(`/vocabularies/${id}`, [
     `/vocabularies/${id}`,
-    [`/vocabularies/${id}`]
-  );
+  ]);
 
   return (
     <section className="min-h-screen py-10">
@@ -29,11 +29,11 @@ const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
             <div className="flex flex-wrap items-center md:gap-2 mt-2">
               <div className="flex items-center">
                 <p className="text-zinc-700 dark:text-zinc-400 italic">{`[${data.romanization}]`}</p>
-                <AudioBtn />
+                <AudioBtn text={data.hangeul} />
               </div>
               <div className="flex items-center">
                 <p className="text-zinc-700 dark:text-zinc-400">{`[${data.pronunciation}]`}</p>
-                <AudioBtn />
+                <AudioBtn text={data.hangeul} />
               </div>
             </div>
             <p className="text-zinc-700 dark:text-zinc-400 mt-2">
@@ -77,28 +77,7 @@ const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
           </div>
         )}
 
-        {data.conjugationTypes.length > 0 && (
-          <div className="mt-8">
-            <FloatSeparator placeholder="Perubahan" />
-            <div className="ml-5 max-w-2xl grid lg:grid-cols-2 gap-2">
-              {data.conjugationTypes.map((each_types) => (
-                <div className="lg:grid-cols-2 grid gap-1" key={each_types.id}>
-                  <p className="capitalize">{each_types.type}</p>
-                  <div className="flex flex-col gap-1 max-md:mb-2">
-                    {each_types.conjugations.map((conjugation) => (
-                      <div className="flex items-center" key={conjugation.id}>
-                        <p className="text-zinc-700 dark:text-zinc-400">
-                          {conjugation.conjugated}
-                        </p>
-                        <AudioBtn />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <Conjugations id={data.id} isConjugated={data.isConjugated === 1} />
 
         <p className="mt-10 text-sm text-zinc-700 dark:text-zinc-400">
           {`Dibuat pada ${format(data.createdAt, "PPPP", {

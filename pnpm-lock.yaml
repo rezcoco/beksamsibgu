@@ -29,6 +29,9 @@ importers:
       '@hookform/resolvers':
         specifier: ^3.9.0
         version: 3.9.0(react-hook-form@7.52.1(react@18.3.1))
+      '@knocklabs/node':
+        specifier: ^0.6.13
+        version: 0.6.13
       '@knocklabs/react':
         specifier: ^0.2.26
         version: 0.2.26(@types/react-dom@18.3.0)(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -689,6 +692,10 @@ packages:
 
   '@knocklabs/client@0.10.12':
     resolution: {integrity: sha512-v7IJ8xU/nHkFKXOn53XK48XlLGoY6LH8D3tfWR6eb0/yp4aeE6BUaSg6MjhK9w3dHOnHDJ81BTkVq7oYMhXqBg==}
+
+  '@knocklabs/node@0.6.13':
+    resolution: {integrity: sha512-XA6HWxIvLiCpRt5GisTFYDZuTuyrRR34XnFwPFPXPNTO1cKQOHLkQvyy7FzAOTD6/PVj1DM2Ge9HHij+Z64Rtg==}
+    engines: {node: '>=17.5.0'}
 
   '@knocklabs/react-core@0.2.23':
     resolution: {integrity: sha512-1e0HlwFHee+4NMEp8rIO/syd5bPw61P1c8JMeG/hJ3UmF2NgLgCUBSrAme6xY/4qeDJ9zyK46giLlqgshzVv1w==}
@@ -2456,6 +2463,9 @@ packages:
     resolution: {integrity: sha512-2yTgeWTWzMWkHu6Jp9NKgePDaYHbntiwvYuuJLbbN9vl7DC9DvXKOB2BC3ZZ92D3cvV/aflH0osDfwpHepQ53w==}
     hasBin: true
 
+  jose@5.7.0:
+    resolution: {integrity: sha512-3P9qfTYDVnNn642LCAqIKbTGb9a1TBxZ9ti5zEVEr48aDdflgRjhspWFb6WM4PzAfFbGMJYC4+803v8riCRAKw==}
+
   js-cookie@3.0.5:
     resolution: {integrity: sha512-cEiJEAEoIbWfCZYKWhVwFuvPX1gETRYPw6LlaTKoxD3s2AkXzkCjnp6h0V77ozyqj0jakteJ4YqDJT830+lVGw==}
     engines: {node: '>=14'}
@@ -3891,6 +3901,10 @@ snapshots:
     transitivePeerDependencies:
       - debug
       - react
+
+  '@knocklabs/node@0.6.13':
+    dependencies:
+      jose: 5.7.0
 
   '@knocklabs/react-core@0.2.23(react@18.3.1)':
     dependencies:
@@ -5863,6 +5877,8 @@ snapshots:
       '@pkgjs/parseargs': 0.11.0
 
   jiti@1.21.6: {}
+
+  jose@5.7.0: {}
 
   js-cookie@3.0.5: {}
 

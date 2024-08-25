@@ -15,16 +15,21 @@ import { revalidate } from "@/lib/actions";
 import EditVocabulary from "./edit-vocabulary";
 import toast from "react-hot-toast";
 import useFetch from "@/hooks/use-fetch";
-import { GetQueryResponseType } from "@/types/type";
-import { useUser } from "@clerk/nextjs";
+import { GetQueryVocabType } from "@/types/type";
+import { useAuth, useUser } from "@clerk/nextjs";
+import { usePathname, useRouter } from "next/navigation";
 
 const VocabActions: React.FC<{
-  data: GetQueryResponseType;
+  data: GetQueryVocabType;
 }> = ({ data }) => {
   const request = useFetch();
+  const router = useRouter();
+  const pathname = usePathname();
   const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
   const [openEdit, setOpenEdit] = React.useState(false);
+  const { isSignedIn } = useAuth();
   const { user } = useUser();
+
   const role = user?.publicMetadata.role;
   const userId = user?.id;
   const allowedRoles = ["admin", "superuser"];
@@ -55,6 +60,16 @@ const VocabActions: React.FC<{
       console.timeEnd("delete");
       setIsDeleteLoading(false);
     }
+  }
+
+  async function onFeedback() {
+    if (!isSignedIn)
+      return router.push(`/auth/sign-in?redirectUrl=${pathname}`);
+  }
+
+  async function onReport() {
+    if (!isSignedIn)
+      return router.push(`/auth/sign-in?redirectUrl=${pathname}`);
   }
 
   return (
@@ -88,8 +103,12 @@ const VocabActions: React.FC<{
             </>
           )}
           <DropdownMenuSeparator />
-          <DropdownMenuItem>Beri masukan</DropdownMenuItem>
-          <DropdownMenuItem>Lapor ke Admin</DropdownMenuItem>
+          {data.authorId !== userId && (
+            <DropdownMenuItem onClick={onFeedback}>
+              Beri masukan
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuItem onClick={onReport}>Lapor ke Admin</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <EditVocabulary data={data} open={openEdit} setOpen={setOpenEdit} />
