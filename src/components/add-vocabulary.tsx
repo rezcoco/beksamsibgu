@@ -71,7 +71,6 @@ const AddVocabulary = () => {
   });
 
   async function vocabSearch(query: string) {
-    console.log(query, existingVocabId);
     if (query.length > 0) {
       const index = searchClient.initIndex("beksamsibgu");
       try {
