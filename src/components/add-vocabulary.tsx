@@ -81,8 +81,6 @@ const AddVocabulary = () => {
           filters: `hangeul:${query}`,
         });
 
-        console.log(searchResult.nbHits);
-
         if (searchResult.hits.length > 0) {
           setExistingVocabId(searchResult.hits[0].objectID);
         } else {
@@ -90,6 +88,7 @@ const AddVocabulary = () => {
         }
       } finally {
         setIsSearch(false);
+        await searchClient.clearCache();
       }
     }
   }
@@ -212,7 +211,10 @@ const AddVocabulary = () => {
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
-                              onClick={() => setOpen(false)}
+                              onClick={() => {
+                                setOpen(false);
+                                form.reset();
+                              }}
                               className="relative rounded-md bg-emerald-500 text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                             >
                               <span className="absolute -inset-2.5" />
@@ -503,7 +505,10 @@ const AddVocabulary = () => {
                     <div className="flex flex-shrink-0 justify-end px-4 py-4">
                       <Button
                         type="button"
-                        onClick={() => setOpen(false)}
+                        onClick={() => {
+                          setOpen(false);
+                          form.reset();
+                        }}
                         className="h-9 px-5 py-3 rounded-md flex items-center ml-4"
                         variant={"secondary"}
                       >
