@@ -1,14 +1,14 @@
 import React from "react";
 import AudioBtn from "@/components/audio-btn";
 import Link from "next/link";
+import FloatSeparator from "@/components/float-separator";
+import Conjugations from "@/components/conjugations";
 import { fetchData } from "@/lib/queries";
 import { GetQueryVocabByIdType } from "@/types/type";
 import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import FloatSeparator from "@/components/float-separator";
 import { format } from "date-fns";
 import { id as ina } from "date-fns/locale";
-import Conjugations from "@/components/conjugations";
 
 const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
   const data: GetQueryVocabByIdType = await fetchData(`/vocabularies/${id}`, [
@@ -45,6 +45,7 @@ const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
               </p>
             )}
           </div>
+
           <Badge className="text-center bg-emerald-500 text-[12px] text-white md:text-sm hover:bg-emerald-500 rounded-lg">
             {data.chapter ? `Bab ${data.chapter}` : "Acak"}
           </Badge>
@@ -77,7 +78,7 @@ const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
           </div>
         )}
 
-        <Conjugations id={data.id} isConjugated={data.isConjugated === 1} />
+        {data.isConjugated === 1 && <Conjugations id={data.id} />}
 
         <p className="mt-10 text-sm text-zinc-700 dark:text-zinc-400">
           {`Dibuat pada ${format(data.createdAt, "PPPP", {

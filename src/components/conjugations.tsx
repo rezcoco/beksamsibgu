@@ -12,7 +12,6 @@ import { Skeleton } from "./ui/skeleton";
 
 type Props = {
   id: string;
-  isConjugated: boolean;
 };
 
 const Loading = () => {
@@ -22,29 +21,29 @@ const Loading = () => {
         <Skeleton className="w-[100px] h-6" />
         <Skeleton className="w-full h-[1px]" />
       </div>
-      <div className="ml-5 max-w-2xl grid lg:grid-cols-2 gap-3">
+      <div className="max-[330px]:ml-0 ml-5 max-w-2xl grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="flex gap-4">
           <Skeleton className="h-8 w-40" />
           <div className="space-y-1">
-            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-6 w-40 min-[330px]:w-48" />
             <Skeleton className="h-6 w-44" />
-            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-6 w-40 min-[330px]:w-48" />
           </div>
         </div>
         <div className="flex gap-4">
           <Skeleton className="h-8 w-40" />
           <div className="space-y-1">
-            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-6 w-40 min-[330px]:w-48" />
             <Skeleton className="h-6 w-44" />
-            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-6 w-40 min-[330px]:w-48" />
           </div>
         </div>
         <div className="flex gap-4">
           <Skeleton className="h-8 w-40" />
           <div className="space-y-1">
-            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-6 w-40 min-[330px]:w-48" />
             <Skeleton className="h-6 w-44" />
-            <Skeleton className="h-6 w-48" />
+            <Skeleton className="h-6 w-40 min-[330px]:w-48" />
           </div>
         </div>
       </div>
