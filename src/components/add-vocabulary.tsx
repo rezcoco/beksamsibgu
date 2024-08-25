@@ -267,7 +267,7 @@ const AddVocabulary = () => {
                                     </FormMessage>
                                   ) : (
                                     existingVocabId && (
-                                      <p className="text-sm font-medium text-destructive">
+                                      <p className="text-sm font-medium dark:text-zinc-400 text-zinc-700">
                                         {`Kosa kota sudah ditambahkan`}{" "}
                                         <Link
                                           target="_blank"
