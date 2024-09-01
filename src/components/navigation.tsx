@@ -9,13 +9,14 @@ import { Button } from "@/components/button";
 import { useIsInsideMobileNavigation } from "@/components/mobile-navigation";
 import { Tag } from "@/components/tag";
 import { remToPx } from "@/lib/rem-to-px";
-import { SignedIn, SignedOut, useAuth, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
 
 interface NavGroup {
   title: string;
   links: Array<{
     title: string;
     href: string;
+    isProtected: boolean;
   }>;
 }
 
@@ -80,9 +81,15 @@ function ActivePageMarker({
   group: NavGroup;
   pathname: string;
 }) {
+  const { isSignedIn } = useAuth();
   let itemHeight = remToPx(2);
   let offset = remToPx(0.25);
-  let activePageIndex = group.links.findIndex((link) => link.href === pathname);
+
+  const pages = isSignedIn
+    ? group.links
+    : group.links.filter((link) => !link.isProtected);
+
+  let activePageIndex = pages.findIndex((link) => link.href === pathname);
   let top = offset + activePageIndex * itemHeight;
 
   return (
@@ -142,13 +149,27 @@ function NavigationGroup({
           )}
         </AnimatePresence>
         <ul role="list" className="border-l border-transparent">
-          {group.links.map((link) => (
-            <motion.li key={link.href} layout="position" className="relative">
-              <NavLink href={link.href} active={link.href === pathname}>
-                {link.title}
-              </NavLink>
-            </motion.li>
-          ))}
+          {group.links.map((link) =>
+            link.isProtected ? (
+              <SignedIn key={link.href}>
+                <motion.li
+                  key={link.href}
+                  layout="position"
+                  className="relative"
+                >
+                  <NavLink href={link.href} active={link.href === pathname}>
+                    {link.title}
+                  </NavLink>
+                </motion.li>
+              </SignedIn>
+            ) : (
+              <motion.li key={link.href} layout="position" className="relative">
+                <NavLink href={link.href} active={link.href === pathname}>
+                  {link.title}
+                </NavLink>
+              </motion.li>
+            )
+          )}
         </ul>
       </div>
     </li>
@@ -159,8 +180,10 @@ export const navigation: Array<NavGroup> = [
   {
     title: "Home",
     links: [
-      { title: "Introduction", href: "/" },
-      { title: "Kosa Kata", href: "/kosa-kata" },
+      { title: "Introduction", href: "/", isProtected: false },
+      { title: "Dashboard", href: "/dashboard", isProtected: true },
+      { title: "Profile", href: "/profile", isProtected: true },
+      { title: "Kosa Kata", href: "/kosa-kata", isProtected: false },
     ],
   },
 ];
@@ -184,7 +207,7 @@ export function Navigation(props: React.ComponentPropsWithoutRef<"nav">) {
         <SignedOut>
           <li className="sticky md:hidden bottom-0 z-10 mt-6">
             <Button
-              href={`/auth/sign-in?redirectUrl=${pathname}`}
+              href={`/auth/sign-in?redirectUrl=${encodeURIComponent(pathname)}`}
               variant="filled"
               className="w-full"
             >

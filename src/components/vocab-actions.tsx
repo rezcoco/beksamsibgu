@@ -54,7 +54,7 @@ const VocabActions: React.FC<{
       } else if (status === 400) {
         toast.error("Bad Request", { id: toastId });
       } else {
-        toast.error("Something went wrong", { id: toastId });
+        toast.error("Terjadi Kesalahan", { id: toastId });
       }
     } finally {
       console.timeEnd("delete");
@@ -64,12 +64,16 @@ const VocabActions: React.FC<{
 
   async function onFeedback() {
     if (!isSignedIn)
-      return router.push(`/auth/sign-in?redirectUrl=${pathname}`);
+      return router.push(
+        `/auth/sign-in?redirectUrl=${encodeURIComponent(pathname)}`
+      );
   }
 
   async function onReport() {
     if (!isSignedIn)
-      return router.push(`/auth/sign-in?redirectUrl=${pathname}`);
+      return router.push(
+        `/auth/sign-in?redirectUrl=${encodeURIComponent(pathname)}`
+      );
   }
 
   return (

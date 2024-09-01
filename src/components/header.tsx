@@ -19,10 +19,6 @@ import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { dark } from "@clerk/themes";
 import { useTheme } from "next-themes";
-import {
-  NotificationFeedPopover,
-  NotificationIconButton,
-} from "@knocklabs/react";
 import "@knocklabs/react/dist/index.css";
 import KnockFeed from "./knock-feed";
 function TopLevelNavItem({
@@ -117,7 +113,7 @@ export const Header = forwardRef<
           <SignedOut>
             <Button
               className="hidden md:block ml-5"
-              href={`/auth/sign-in?redirectUrl=${pathname}`}
+              href={`/auth/sign-in?redirectUrl=${encodeURIComponent(pathname)}`}
             >
               Sign in
             </Button>

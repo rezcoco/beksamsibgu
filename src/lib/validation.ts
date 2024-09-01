@@ -4,6 +4,7 @@ export const insertVocabSchema = z.object({
   hangeul: z.string().min(1, "hangul tidak boleh kosong"),
   translation: z.string().min(1, "arti tidak boleh kosong"),
   isRegular: z.boolean().default(true),
+  isAdj: z.boolean().default(false),
   chapter: z.number().min(1).max(60).optional(),
   reference: z.string().optional(),
   sentenceEx: z.string().optional(),

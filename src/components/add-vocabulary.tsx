@@ -49,6 +49,7 @@ const AddVocabulary = () => {
   const [isRegular, setIsRegular] = React.useState(true);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isSearch, setIsSearch] = React.useState(false);
+  const [isAdj, setIsAdj] = React.useState(false);
   const [existingVocabId, setExistingVocabId] = React.useState<
     string | undefined
   >();
@@ -130,10 +131,18 @@ const AddVocabulary = () => {
       return !prevState;
     });
   }
+  function onSwitchAdjChange() {
+    return setIsAdj((prevState) => {
+      form.setValue("isAdj", !prevState);
+      return !prevState;
+    });
+  }
 
   function onAddButtonClicked() {
     if (!isSignedIn) {
-      return router.push("/auth/sign-in?redirectUrl=" + "/kosa-kata");
+      return router.push(
+        "/auth/sign-in?redirectUrl=" + encodeURIComponent("/kosa-kata")
+      );
     }
 
     return setOpen((prevState) => !prevState);
@@ -325,9 +334,17 @@ const AddVocabulary = () => {
                                         : "KK/KS Tidak beraturan"}
                                     </Label>
                                   </div>
+                                  <div className="flex gap-2 items-center mt-4">
+                                    <Switch
+                                      onCheckedChange={onSwitchAdjChange}
+                                      id="isAdj"
+                                    />
+                                    <Label htmlFor="isAdj">Kata Sifat</Label>
+                                  </div>
                                 </div>
                               )}
                             </div>
+
                             <FormField
                               control={form.control}
                               name="translation"

@@ -11,9 +11,12 @@ const Loading = () => {
             Kumpulan kosa kata yang ditambahkan pengguna
           </p>
         </div>
-        <Skeleton className="w-52 h-10" />
+        <Skeleton className="w-52 rounded-full h-10 ml-auto" />
       </div>
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+
+      <Skeleton className="w-48 h-8" />
+
+      <div className="grid gap-5 mt-8 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
         <div className="flex flex-col gap-1">
           <Skeleton className="w-full h-[126px]" />
           <Skeleton className="w-full h-[41px]" />

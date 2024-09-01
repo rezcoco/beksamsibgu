@@ -1,4 +1,3 @@
-import KnockInitProvider from "@/components/knock-feed";
 import Layout from "@/components/layout";
 import React, { PropsWithChildren } from "react";
 

@@ -3,19 +3,20 @@ import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import VocabActions from "./vocab-actions";
 import { Badge } from "./ui/badge";
-import { fetchData } from "@/lib/queries";
 import { GetQueryVocabType } from "@/types/type";
 import AudioBtn from "./audio-btn";
+import { Skeleton } from "./ui/skeleton";
+import NoResultsIcon from "./no-result-icon";
 
-const List = async () => {
-  const data: GetQueryVocabType[] = await fetchData("/vocabularies", [
-    "vocabularies",
-  ]);
+type Props = {
+  data: GetQueryVocabType[];
+};
 
+const List: React.FC<Props> = ({ data }) => {
   return (
-    <section>
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-        {data.map((value) => (
+    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mt-8">
+      {data && data?.length > 0 ? (
+        data.map((value) => (
           <div
             key={value.id}
             className="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 relative border flex-col rounded-lg bg-white dark:bg-zinc-900 flex"
@@ -50,9 +51,16 @@ const List = async () => {
               />
             </Link>
           </div>
-        ))}
-      </div>
-    </section>
+        ))
+      ) : (
+        <div className="p-6 mt-8 col-span-3 text-center">
+          <NoResultsIcon className="mx-auto h-5 w-5 stroke-zinc-900 dark:stroke-zinc-700 dark:text-zinc-400" />
+          <p className="mt-2 text-sm dark:text-zinc-400">
+            Kosa kata tidak ditemukan, coba tambahkan
+          </p>
+        </div>
+      )}
+    </div>
   );
 };
 
