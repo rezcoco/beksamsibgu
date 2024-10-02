@@ -15,6 +15,15 @@ const nextConfig = {
       exprContextCritical: false,
     };
     return config;
+  },
+  images: {
+    remotePatterns: [{
+      hostname: "img.clerk.com"
+    },
+    {
+      hostname: "tailwindui.com"
+    }
+    ]
   }
 };
 

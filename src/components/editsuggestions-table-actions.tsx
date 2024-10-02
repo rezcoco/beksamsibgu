@@ -88,6 +88,9 @@ export default function EditSuggestionsTableActions({
     } else if (key === "chapter") {
       return vocabulary.chapter ? vocabulary.chapter : "Acak";
     } else {
+      if (key === "tag") {
+        return vocabulary[key]?.name;
+      }
       return vocabulary[key];
     }
   }
@@ -100,8 +103,9 @@ export default function EditSuggestionsTableActions({
       data.status === "approved" && data.vocabularyHistory
         ? data.vocabularyHistory
         : data.originVocabulary;
-    const before = originalVocabulary[key];
-    const after = data[key];
+    const before =
+      key === "tag" ? originalVocabulary[key]?.name : originalVocabulary[key];
+    const after = key === "tag" ? data[key]?.name : data[key];
 
     if (!before && key !== "chapter" && before !== after) {
       return (

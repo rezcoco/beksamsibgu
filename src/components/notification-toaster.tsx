@@ -24,7 +24,6 @@ const NotificationToaster = ({ userId }: { userId: string }) => {
 
   useEffect(() => {
     const onNotificationsReceived = ({ items }: { items: any }) => {
-      console.log("notified");
       // Whenever we receive a new notification from our real-time stream, show a toast
       // (note here that we can receive > 1 items in a batch)
       items.forEach((notification: any) => {

@@ -3,105 +3,29 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { AnimatePresence, motion } from "framer-motion";
 
 import { Button } from "@/components/button";
-import { useIsInsideMobileNavigation } from "@/components/mobile-navigation";
-import { Tag } from "@/components/tag";
-import { remToPx } from "@/lib/rem-to-px";
-import { SignedIn, SignedOut, useAuth } from "@clerk/nextjs";
+import { SignedOut, useUser } from "@clerk/nextjs";
+import { allowedRoles } from "@/constants";
+import {
+  Award,
+  Book,
+  House,
+  LayoutDashboard,
+  Trophy,
+  User,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Skeleton } from "./ui/skeleton";
 
 interface NavGroup {
   title: string;
   links: Array<{
     title: string;
     href: string;
+    icon: any;
     isProtected: boolean;
   }>;
-}
-
-function TopLevelNavItem({
-  href,
-  children,
-}: {
-  href: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <li className="md:hidden">
-      <Link
-        href={href}
-        className="block py-1 text-sm text-zinc-700 dark:text-zinc-400 transition hover:text-zinc-900 dark:hover:text-white"
-      >
-        {children}
-      </Link>
-    </li>
-  );
-}
-
-function NavLink({
-  href,
-  children,
-  tag,
-  active = false,
-  isAnchorLink = false,
-}: {
-  href: string;
-  children: React.ReactNode;
-  tag?: string;
-  active?: boolean;
-  isAnchorLink?: boolean;
-}) {
-  return (
-    <Link
-      href={href}
-      aria-current={active ? "page" : undefined}
-      className={clsx(
-        "flex justify-between gap-2 py-1 pr-3 text-sm transition",
-        isAnchorLink ? "pl-7" : "pl-4",
-        active
-          ? "text-zinc-900 dark:text-white"
-          : "text-zinc-700 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
-      )}
-    >
-      <span className="truncate">{children}</span>
-      {tag && (
-        <Tag variant="small" color="zinc">
-          {tag}
-        </Tag>
-      )}
-    </Link>
-  );
-}
-
-function ActivePageMarker({
-  group,
-  pathname,
-}: {
-  group: NavGroup;
-  pathname: string;
-}) {
-  const { isSignedIn } = useAuth();
-  let itemHeight = remToPx(2);
-  let offset = remToPx(0.25);
-
-  const pages = isSignedIn
-    ? group.links
-    : group.links.filter((link) => !link.isProtected);
-
-  let activePageIndex = pages.findIndex((link) => link.href === pathname);
-  let top = offset + activePageIndex * itemHeight;
-
-  return (
-    <motion.div
-      layout
-      className="absolute left-2 h-6 w-px bg-emerald-500"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1, transition: { delay: 0.2 } }}
-      exit={{ opacity: 0 }}
-      style={{ top }}
-    />
-  );
 }
 
 function NavigationGroup({
@@ -111,65 +35,63 @@ function NavigationGroup({
   group: NavGroup;
   className?: string;
 }) {
-  // If this is the mobile navigation then we always render the initial
-  // state, so that the state does not change during the close animation.
-  // The state will still update when we re-open (re-render) the navigation.
-  let isInsideMobileNavigation = useIsInsideMobileNavigation();
   let pathname = usePathname();
-  let isActiveGroup =
-    group.links.findIndex((link) => link.href === pathname) !== -1;
+
+  const { user, isLoaded } = useUser();
 
   return (
     <li className={clsx("relative mt-6", className)}>
-      <motion.h2
-        layout="position"
-        className="text-xs font-semibold text-zinc-900 dark:text-white"
-      >
+      <h2 className="text-xs font-semibold text-zinc-900 dark:text-white">
         {group.title}
-      </motion.h2>
+      </h2>
       <div className="relative mt-3 pl-2">
-        <AnimatePresence initial={!isInsideMobileNavigation}>
-          {isActiveGroup && (
-            <motion.div
-              layout
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1, transition: { delay: 0.2 } }}
-              exit={{ opacity: 0 }}
-              className="absolute inset-x-0 top-0 bg-zinc-800/2.5 will-change-transform dark:bg-white/2.5"
-            />
-          )}
-        </AnimatePresence>
-        <motion.div
-          layout
-          className="absolute inset-y-0 left-2 w-px bg-zinc-900/10 dark:bg-white/5"
-        />
-        <AnimatePresence initial={false}>
-          {isActiveGroup && (
-            <ActivePageMarker group={group} pathname={pathname} />
-          )}
-        </AnimatePresence>
-        <ul role="list" className="border-l border-transparent">
-          {group.links.map((link) =>
-            link.isProtected ? (
-              <SignedIn key={link.href}>
-                <motion.li
-                  key={link.href}
-                  layout="position"
-                  className="relative"
-                >
-                  <NavLink href={link.href} active={link.href === pathname}>
+        <ul role="list" className="flex flex-col gap-1">
+          {group.links.map((link) => {
+            const role = user?.publicMetadata?.role as string | undefined;
+            const username = user?.username;
+            const isActive =
+              (pathname.includes(link.href) && link.href.length > 1) ||
+              pathname === link.href;
+
+            if (link.href === "/profile") {
+              if (username) {
+                link.href = `/profile/${username}`;
+              } else {
+                return null;
+              }
+            }
+
+            if (link.href === "/dashboard") {
+              if (!user || !allowedRoles.includes(role ?? "")) {
+                return null;
+              }
+            }
+
+            return (
+              <li key={link.href} className="relative group">
+                {isLoaded ? (
+                  <Link
+                    href={link.href}
+                    className={cn(
+                      "flex items-center gap-3 text-sm text-zinc-700 dark:text-zinc-400 font-semibold leading-6 group-hover:dark:text-white px-2 py-1.5 rounded-md",
+                      isActive && "!text-emerald-500"
+                    )}
+                  >
+                    <link.icon
+                      size={20}
+                      className={cn(
+                        "dark:text-zinc-400 text-zinc-700 group-hover:dark:text-white",
+                        isActive && "!text-emerald-500"
+                      )}
+                    />
                     {link.title}
-                  </NavLink>
-                </motion.li>
-              </SignedIn>
-            ) : (
-              <motion.li key={link.href} layout="position" className="relative">
-                <NavLink href={link.href} active={link.href === pathname}>
-                  {link.title}
-                </NavLink>
-              </motion.li>
-            )
-          )}
+                  </Link>
+                ) : (
+                  <Skeleton className="h-10 rounded-md w-full" />
+                )}
+              </li>
+            );
+          })}
         </ul>
       </div>
     </li>
@@ -180,10 +102,44 @@ export const navigation: Array<NavGroup> = [
   {
     title: "Home",
     links: [
-      { title: "Introduction", href: "/", isProtected: false },
-      { title: "Dashboard", href: "/dashboard", isProtected: true },
-      { title: "Profile", href: "/profile", isProtected: true },
-      { title: "Kosa Kata", href: "/kosa-kata", isProtected: false },
+      { title: "Introduction", href: "/", icon: House, isProtected: false },
+      {
+        title: "Dashboard",
+        href: "/dashboard",
+        icon: LayoutDashboard,
+        isProtected: true,
+      },
+      { title: "Profile", href: "/profile", icon: User, isProtected: true },
+      {
+        title: "Kosa Kata",
+        href: "/kosa-kata",
+        icon: Book,
+        isProtected: false,
+      },
+      {
+        title: "Top Contributors",
+        href: "/top-contributors",
+        icon: Award,
+        isProtected: false,
+      },
+    ],
+  },
+  {
+    title: "Others",
+    links: [
+      {
+        title: "Panduan Kosa Kata",
+        href: "/panduan-kosa-kata",
+        icon: House,
+        isProtected: false,
+      },
+      {
+        title: "Resources",
+        href: "/resources",
+        icon: House,
+        isProtected: false,
+      },
+      { title: "Credits", href: "/credits", icon: House, isProtected: false },
     ],
   },
 ];
@@ -194,9 +150,6 @@ export function Navigation(props: React.ComponentPropsWithoutRef<"nav">) {
   return (
     <nav className="min-h-full" {...props}>
       <ul className="min-h-full" role="list">
-        <TopLevelNavItem href="/">API</TopLevelNavItem>
-        <TopLevelNavItem href="#">Documentation</TopLevelNavItem>
-        <TopLevelNavItem href="#">Support</TopLevelNavItem>
         {navigation.map((group, groupIndex) => (
           <NavigationGroup
             key={group.title}
@@ -207,9 +160,11 @@ export function Navigation(props: React.ComponentPropsWithoutRef<"nav">) {
         <SignedOut>
           <li className="sticky md:hidden bottom-0 z-10 mt-6">
             <Button
-              href={`/auth/sign-in?redirectUrl=${encodeURIComponent(pathname)}`}
+              href={`/auth/sign-in?redirect_url=${encodeURIComponent(
+                pathname
+              )}`}
               variant="filled"
-              className="w-full"
+              className="w-full rounded-md"
             >
               Sign in
             </Button>

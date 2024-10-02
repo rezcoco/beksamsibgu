@@ -8,13 +8,17 @@ export type GetQueryVocabType = {
   translationEx: string | null
   predicate: string | null
   isRegular: number
+  isAdj: number
   romanization: string
   pronunciation: string
   note: string | null,
-  audioUrl: string | null
   authorId: string
   createdAt: string,
   updatedAt: string
+  tag: {
+    id: string
+    name: string
+  } | null;
 }
 
 export type GetQueryVocabByIdType = {
@@ -28,7 +32,6 @@ export type GetQueryVocabByIdType = {
   predicate: string | null
   isRegular: number
   isAdj: number
-  isConjugated: number
   romanization: string
   pronunciation: string
   note: string | null
@@ -41,6 +44,10 @@ export type GetQueryVocabByIdType = {
     lastName: string
     username: string
   }
+  tag: {
+    id: string
+    name: string
+  } | null;
 }
 
 export type GetQueryConjugationType = Array<{
@@ -58,6 +65,60 @@ export type GetQueryConjugationType = Array<{
     updatedAt: string
   }>
 }>
+
+export type GetQueryUserType = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  picture: string;
+  reputation: number;
+  createdAt: string;
+  updatedAt: string;
+  role: "user" | "admin" | "superuser";
+  totalVocabulary: number;
+  totalReport: number;
+  totalEditSuggestions: number;
+};
+
+export type GetQueryReportType = {
+  id: string;
+  message: string;
+  createdAt: string;
+  reporterId: string;
+  vocabularyId: string;
+  status: "pending" | "resolved"
+  reporter: {
+    firstName: string;
+    lastName: string;
+    username: string;
+  };
+  vocabulary: {
+    hangeul: string;
+  };
+}
+
+export type GetQueryEditSuggestionsType = GetQueryVocabType & {
+  vocabularyId: string
+  status: "pending" | "rejected" | "approved"
+  author: {
+    firstName: string
+    lastName: string
+    username: string
+  };
+  originVocabulary: GetQueryVocabType
+  vocabularyHistory: null | GetQueryVocabType & {
+    vocabularyId: string
+    editSuggestionId: string
+  }
+}
+
+export type GetQueryStatisticsType = {
+  totalVocabulary: number
+  totalReport: number
+  totalUser: number
+}
 
 export const CONJUGATION_TYPE = {
   declarative_present: "declarative present",

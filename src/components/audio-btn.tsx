@@ -1,6 +1,6 @@
 "use client";
 
-import { API_BASE_URL } from "@/constants";
+import { API_UTILS_URL } from "@/constants";
 import { Volume2 } from "lucide-react";
 import React from "react";
 import toast from "react-hot-toast";
@@ -16,10 +16,10 @@ const AudioBtn: React.FC<Props> = ({ text }) => {
 
   async function onAudioClicked() {
     setIsLoading(true);
-    const toastId = toast.loading("Menunggu...");
+    const toastId = toast.loading("Memuat...");
 
     try {
-      const res = await fetch(`${API_BASE_URL}/vocabularies/audio`, {
+      const res = await fetch(`${API_UTILS_URL}/vocabularies/audio`, {
         body: JSON.stringify({ text }),
         headers: {
           "Content-Type": "application/json",
@@ -27,7 +27,7 @@ const AudioBtn: React.FC<Props> = ({ text }) => {
         method: "POST",
       });
 
-      if (!res.ok) throw new Error("Request error");
+      if (!res.ok) throw new Error(res.statusText);
 
       const blob = await res.blob();
 

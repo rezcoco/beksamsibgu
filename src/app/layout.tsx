@@ -34,7 +34,16 @@ export default function RootLayout({
           <SpeedInsights />
           <div className="w-full">
             {children}
-            <Toaster />
+            <Toaster
+              toastOptions={{
+                success: {
+                  style: { background: "#f0fdf4", color: "#166534" },
+                },
+                error: {
+                  style: { background: "#fef2f2", color: "#b91c1c" },
+                },
+              }}
+            />
           </div>
         </Providers>
       </body>

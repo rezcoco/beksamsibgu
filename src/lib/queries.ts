@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/constants";
+import axios from "axios";
 
 export async function fetchData(path: string, tags: string[]) {
   try {
@@ -31,3 +32,10 @@ export async function fetchVocabById(id: string, tags: string[]) {
     return []
   }
 }
+
+export const axiosRequest = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  }
+})

@@ -5,21 +5,20 @@ import VocabActions from "./vocab-actions";
 import { Badge } from "./ui/badge";
 import { GetQueryVocabType } from "@/types/type";
 import AudioBtn from "./audio-btn";
-import { Skeleton } from "./ui/skeleton";
 import NoResultsIcon from "./no-result-icon";
 
 type Props = {
   data: GetQueryVocabType[];
 };
 
-const List: React.FC<Props> = ({ data }) => {
+export default function List({ data }: Props) {
   return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mt-8">
+    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mt-5">
       {data && data?.length > 0 ? (
         data.map((value) => (
           <div
             key={value.id}
-            className="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 relative border flex-col rounded-lg bg-white dark:bg-zinc-900 flex"
+            className="mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 relative border flex-col rounded-lg bg-white dark:bg-card flex"
           >
             <div className="px-4 py-5 sm:p-6">
               <div className="flex justify-between">
@@ -62,6 +61,4 @@ const List: React.FC<Props> = ({ data }) => {
       )}
     </div>
   );
-};
-
-export default List;
+}

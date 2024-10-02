@@ -113,7 +113,9 @@ export const Header = forwardRef<
           <SignedOut>
             <Button
               className="hidden md:block ml-5"
-              href={`/auth/sign-in?redirectUrl=${encodeURIComponent(pathname)}`}
+              href={`/auth/sign-in?redirect_url=${encodeURIComponent(
+                pathname
+              )}`}
             >
               Sign in
             </Button>

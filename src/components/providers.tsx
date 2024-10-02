@@ -35,7 +35,11 @@ export function Providers({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   return (
-    <ThemeProvider attribute="class" disableTransitionOnChange>
+    <ThemeProvider
+      attribute="class"
+      disableTransitionOnChange
+      defaultTheme="dark"
+    >
       <ClerkProvider afterSignOutUrl={pathname}>
         <QueryClientProvider client={queryClient}>
           <ThemeWatcher />

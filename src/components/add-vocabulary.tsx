@@ -7,7 +7,7 @@ import {
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
-import { Check, LoaderCircle, XIcon } from "lucide-react";
+import { Check, LoaderCircle, PlusIcon, XIcon } from "lucide-react";
 import { Button } from "./button";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
@@ -28,20 +28,20 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
-import useFetch from "@/hooks/use-fetch";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
-import { insertVocabSchema, InsertVocabType } from "@/lib/validation";
+import { mutationVocabSchema, MutationVocabType } from "@/lib/validation";
 import { useAuth } from "@clerk/nextjs";
 import { revalidate } from "@/lib/actions";
 import searchClient from "@/lib/algolia";
 import Link from "next/link";
 import { createId } from "@paralleldrive/cuid2";
+import { axiosRequest } from "@/lib/queries";
+import { toastError } from "@/lib/utils";
 
 const AddVocabulary = () => {
   const router = useRouter();
-  const request = useFetch();
-  const { isSignedIn, userId } = useAuth();
+  const { isSignedIn, userId, getToken } = useAuth();
   const [open, setOpen] = React.useState(false);
   const [openChapter, setOpenChapter] = React.useState(false);
   const [addExample, setAddExample] = React.useState(false);
@@ -56,8 +56,8 @@ const AddVocabulary = () => {
   const [selectedChapter, setSelectedChapter] = React.useState<
     undefined | number
   >();
-  const form = useForm<InsertVocabType>({
-    resolver: zodResolver(insertVocabSchema),
+  const form = useForm<MutationVocabType>({
+    resolver: zodResolver(mutationVocabSchema),
     defaultValues: {
       hangeul: "",
       translation: "",
@@ -67,7 +67,9 @@ const AddVocabulary = () => {
       reference: "",
       chapter: undefined,
       isRegular: true,
+      isAdj: false,
       predicate: "",
+      tag: "",
     },
   });
 
@@ -141,41 +143,44 @@ const AddVocabulary = () => {
   function onAddButtonClicked() {
     if (!isSignedIn) {
       return router.push(
-        "/auth/sign-in?redirectUrl=" + encodeURIComponent("/kosa-kata")
+        "/auth/sign-in?redirect_url=" + encodeURIComponent("/kosa-kata")
       );
     }
 
     return setOpen((prevState) => !prevState);
   }
 
-  async function onSubmit(values: InsertVocabType) {
+  async function onSubmit(values: MutationVocabType) {
     try {
       console.time("insert");
       setIsLoading(true);
-      const axiosRequest = await request();
-      await axiosRequest.post("/vocabularies", {
-        hangeul: values.hangeul || undefined,
-        translation: values.translation || undefined,
-        note: values.note || undefined,
-        sentenceEx: values.sentenceEx || undefined,
-        translationEx: values.translationEx || undefined,
-        reference: values.reference || undefined,
-        chapter: values.chapter,
-        isRegular: values.isRegular,
-        predicate: values.predicate || undefined,
-        authorId: userId,
-      });
+      await axiosRequest.post(
+        "/vocabularies",
+        {
+          hangeul: values.hangeul || undefined,
+          translation: values.translation || undefined,
+          note: values.note || undefined,
+          sentenceEx: values.sentenceEx || undefined,
+          translationEx: values.translationEx || undefined,
+          reference: values.reference || undefined,
+          chapter: values.chapter,
+          isRegular: values.isRegular,
+          predicate: values.predicate || undefined,
+          authorId: userId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${await getToken()}`,
+          },
+        }
+      );
 
-      await revalidate("vocabularies");
+      await revalidate("/kosa-kata");
       toast.success("Berhasil menambahkan", { duration: 2500 });
     } catch (error: any) {
       const status = error?.response?.status;
-      if (status !== 400) {
-        console.log(error);
-        toast.error("Terjadi kesalahan");
-      } else {
-        toast.error("Gagal menambahkan");
-      }
+
+      toastError(status);
     } finally {
       console.timeEnd("insert");
       setIsLoading(false);
@@ -192,9 +197,10 @@ const AddVocabulary = () => {
       <Button
         variant={"filled"}
         onClick={onAddButtonClicked}
-        className="h-9 px-6 py-3 w-fit flex items-center max-md:ml-auto"
+        className="h-9 px-5 rounded-md py-3 w-fit flex items-center max-md:ml-auto gap-2"
       >
-        Tambahkan Baru
+        <PlusIcon size={20} />
+        <span className="max-sm:hidden">Tambahkan</span>
       </Button>
       <Dialog open={open} onClose={setOpen} className="relative z-50">
         <DialogBackdrop className="fixed inset-0 bg-black/40" />
@@ -221,6 +227,9 @@ const AddVocabulary = () => {
                             <button
                               type="button"
                               onClick={() => {
+                                setAddExample(false);
+                                setAddPredicate(false);
+                                setSelectedChapter(undefined);
                                 setOpen(false);
                                 form.reset();
                               }}
@@ -486,11 +495,33 @@ const AddVocabulary = () => {
                                   </ScrollArea>
                                 </PopoverContent>
                                 <p className="text-muted-foreground text-sm mt-2">
-                                  Pilih bab kosa kata untuk dikelompokan
-                                  (optional)
+                                  Pilih bab kosa kata (optional)
                                 </p>
                               </Popover>
                             </div>
+                            <FormField
+                              control={form.control}
+                              name="tag"
+                              render={({ field }) => (
+                                <FormItem>
+                                  <FormLabel htmlFor="tag">Tag</FormLabel>
+                                  <FormControl className="mt-2">
+                                    <Input
+                                      {...field}
+                                      placeholder="cth: perkakas"
+                                      value={
+                                        field.value === null ? "" : field.value
+                                      }
+                                      id="tag"
+                                    />
+                                  </FormControl>
+                                  <FormDescription>
+                                    Masukan tag untuk mengelompokan kosa kata
+                                    (optional)
+                                  </FormDescription>
+                                </FormItem>
+                              )}
+                            />
                             <FormField
                               control={form.control}
                               name="reference"
@@ -523,6 +554,9 @@ const AddVocabulary = () => {
                       <Button
                         type="button"
                         onClick={() => {
+                          setAddExample(false);
+                          setAddPredicate(false);
+                          setSelectedChapter(undefined);
                           setOpen(false);
                           form.reset();
                         }}

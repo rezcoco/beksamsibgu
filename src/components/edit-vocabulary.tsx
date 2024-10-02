@@ -28,25 +28,27 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { CaretSortIcon } from "@radix-ui/react-icons";
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
-import { insertVocabSchema, InsertVocabType } from "@/lib/validation";
+import { mutationVocabSchema, MutationVocabType } from "@/lib/validation";
 import { useAuth } from "@clerk/nextjs";
-import { revalidate } from "@/lib/actions";
 import { GetQueryVocabType } from "@/types/type";
-import useFetch from "@/hooks/use-fetch";
-import toast from "react-hot-toast";
+import { toastError } from "@/lib/utils";
+import { AxiosError } from "axios";
 
-type EditVocabularyProps = {
+type Props = {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   data: GetQueryVocabType;
+  mode?: "edit-vocabulary" | "suggest" | "edit-suggest";
+  onSubmitCb: (body: any) => Promise<void>;
 };
 
-const EditVocabulary: React.FC<EditVocabularyProps> = ({
+export default function EditVocabulary({
+  onSubmitCb,
   open,
   setOpen,
   data,
-}) => {
-  const request = useFetch();
+  mode = "edit-vocabulary",
+}: Props) {
   const uniqueId = React.useId();
   const { userId } = useAuth();
   const [openChapter, setOpenChapter] = React.useState(false);
@@ -57,23 +59,29 @@ const EditVocabulary: React.FC<EditVocabularyProps> = ({
     data.predicate ? true : false
   );
   const [isRegular, setIsRegular] = React.useState(data.isRegular === 1);
+  const [isAdj, setIsAdj] = React.useState(data.isAdj === 1);
   const [isLoading, setIsLoading] = React.useState(false);
   const [selectedChapter, setSelectedChapter] = React.useState<
     undefined | number
   >(data.chapter ?? undefined);
-  const form = useForm<InsertVocabType>({
-    resolver: zodResolver(insertVocabSchema),
-    defaultValues: {
-      hangeul: data.hangeul,
-      translation: data.translation,
-      note: data.note ?? "",
-      sentenceEx: data.sentenceEx ?? "",
-      translationEx: data.translationEx ?? "",
-      reference: data.reference ?? "",
-      chapter: data.chapter ?? undefined,
-      isRegular: data.isRegular === 1,
-      predicate: data.predicate ?? "",
-    },
+
+  const defaultValues = {
+    hangeul: data.hangeul,
+    translation: data.translation,
+    note: data.note ?? "",
+    sentenceEx: data.sentenceEx ?? "",
+    translationEx: data.translationEx ?? "",
+    reference: data.reference ?? "",
+    chapter: data.chapter ?? undefined,
+    isRegular: data.isRegular === 1,
+    isAdj: data.isAdj === 1,
+    predicate: data.predicate ?? "",
+    tag: data.tag?.name ?? "",
+  };
+
+  const form = useForm<MutationVocabType>({
+    resolver: zodResolver(mutationVocabSchema),
+    defaultValues,
   });
 
   function onChapterSelect(value: number) {
@@ -96,14 +104,10 @@ const EditVocabulary: React.FC<EditVocabularyProps> = ({
 
   function onSwitchChange() {
     setAddExample((prevState) => !prevState);
-    form.resetField("sentenceEx");
-    return form.resetField("translationEx");
   }
 
   function onSwitchConjugationChange() {
     setAddPredicate((prevState) => !prevState);
-    form.resetField("predicate");
-    form.resetField("isRegular");
     return setIsRegular(true);
   }
 
@@ -114,46 +118,63 @@ const EditVocabulary: React.FC<EditVocabularyProps> = ({
     });
   }
 
-  async function onSubmit(values: InsertVocabType) {
+  function onSwitchAdjChange() {
+    return setIsAdj((prevState) => {
+      form.setValue("isAdj", !prevState);
+      return !prevState;
+    });
+  }
+
+  async function onSubmit(values: MutationVocabType) {
+    const isHasChanges = Object.keys(form.formState.dirtyFields).length > 0;
+
+    if (!isHasChanges) return;
+
     try {
       console.time("update");
       setIsLoading(true);
-      const axiosRequest = await request();
-      console.log(values);
-      await axiosRequest.put(
-        `/vocabularies/${data.id}`,
-        Object.assign(values, {
-          authorId: userId,
-          hangeul: values.hangeul || undefined,
-          translation: values.translation || undefined,
-          note: values.note || undefined,
-          sentenceEx: values.sentenceEx || undefined,
-          translationEx: values.translationEx || undefined,
-          reference: values.reference || undefined,
-          chapter: values.chapter,
-          isRegular: values.isRegular,
-          predicate: values.predicate || undefined,
-        })
-      );
 
-      await revalidate("vocabularies");
-      toast.success("Berhasil menyunting", { duration: 2500 });
-    } catch (error: any) {
-      const status = error?.response?.status;
-      if (status !== 400) {
-        console.log(error);
-        toast.error("Terjadi kesalahan");
-      } else {
-        toast.error("Gagal menambahkan");
-      }
+      const body = Object.assign(values, {
+        authorId: userId,
+        hangeul: values.hangeul || undefined,
+        translation: values.translation || undefined,
+        note: values.note || undefined,
+        sentenceEx: values.sentenceEx || undefined,
+        translationEx: values.translationEx || undefined,
+        reference: values.reference || undefined,
+        chapter: values.chapter,
+        isRegular: values.isRegular,
+        predicate: values.predicate || undefined,
+      });
+
+      await onSubmitCb(body);
+
+      Object.entries(body).map(([Key, value]: any[]) => {
+        form.setValue(Key, value);
+      });
+    } catch (error) {
+      const err = error as Error;
+      const cause = err.cause as AxiosError;
+      const status = cause?.response?.status;
+
+      toastError(status);
+      form.reset();
     } finally {
       console.timeEnd("update");
       setIsLoading(false);
       setOpen(false);
     }
   }
+
   return (
-    <Dialog open={open} onClose={setOpen} className="relative z-50">
+    <Dialog
+      open={open}
+      onClose={() => {
+        setOpen((prevState) => !prevState);
+        form.reset(defaultValues);
+      }}
+      className="relative z-50"
+    >
       <DialogBackdrop className="fixed inset-0 bg-black/40" />
 
       <div className="fixed inset-0 overflow-hidden">
@@ -172,12 +193,17 @@ const EditVocabulary: React.FC<EditVocabularyProps> = ({
                     <div className="bg-emerald-500 px-4 py-6 sm:px-6">
                       <div className="flex items-center justify-between">
                         <DialogTitle className="text-base font-semibold leading-6 text-white">
-                          Edit Kosa Kata
+                          {mode === "edit-vocabulary"
+                            ? "Edit Kosa Kata"
+                            : "Sarankan Pengeditan"}
                         </DialogTitle>
                         <div className="ml-3 flex h-7 items-center">
                           <button
                             type="button"
-                            onClick={() => setOpen(false)}
+                            onClick={() => {
+                              form.reset(defaultValues);
+                              setOpen(false);
+                            }}
                             className="relative rounded-md bg-emerald-500 text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
                           >
                             <span className="absolute -inset-2.5" />
@@ -188,8 +214,9 @@ const EditVocabulary: React.FC<EditVocabularyProps> = ({
                       </div>
                       <div className="mt-1">
                         <p className="text-sm text-emerald-100">
-                          Mulai mengedit kosa kata dengan mengisi informasi yang
-                          diperlukan.
+                          {mode === "edit-vocabulary"
+                            ? "Mulai mengedit kosa kata dengan mengisi informasi yang diperlukan."
+                            : "Berikan saran pengeditan kepada author pada bagian yang diperlukan"}
                         </p>
                       </div>
                     </div>
@@ -254,6 +281,14 @@ const EditVocabulary: React.FC<EditVocabularyProps> = ({
                                       ? "KK/KS Beraturan"
                                       : "KK/KS Tidak beraturan"}
                                   </Label>
+                                </div>
+                                <div className="flex gap-2 items-center mt-4">
+                                  <Switch
+                                    onCheckedChange={onSwitchAdjChange}
+                                    checked={isAdj}
+                                    id="isAdj"
+                                  />
+                                  <Label htmlFor="isAdj">Kata Sifat</Label>
                                 </div>
                               </div>
                             )}
@@ -408,6 +443,29 @@ const EditVocabulary: React.FC<EditVocabularyProps> = ({
                           </div>
                           <FormField
                             control={form.control}
+                            name="tag"
+                            render={({ field }) => (
+                              <FormItem>
+                                <FormLabel htmlFor="tag">Tag</FormLabel>
+                                <FormControl className="mt-2">
+                                  <Input
+                                    {...field}
+                                    placeholder="cth: perkakas"
+                                    value={
+                                      field.value === null ? "" : field.value
+                                    }
+                                    id="tag"
+                                  />
+                                </FormControl>
+                                <FormDescription>
+                                  Masukan tag untuk mengelompokan kosa kata
+                                  (optional)
+                                </FormDescription>
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
                             name="reference"
                             render={({ field }) => (
                               <FormItem>
@@ -437,7 +495,10 @@ const EditVocabulary: React.FC<EditVocabularyProps> = ({
                   <div className="flex flex-shrink-0 justify-end px-4 py-4">
                     <Button
                       type="button"
-                      onClick={() => setOpen(false)}
+                      onClick={() => {
+                        form.reset(defaultValues);
+                        setOpen(false);
+                      }}
                       className="h-9 px-5 py-3 rounded-md flex items-center ml-4"
                       variant={"secondary"}
                     >
@@ -453,7 +514,13 @@ const EditVocabulary: React.FC<EditVocabularyProps> = ({
                           className="mr-1 text-gray-200 dark:text-emerald-200 animate-spin"
                         />
                       )}
-                      {isLoading ? "Save..." : "Save"}
+                      {mode === "edit-vocabulary"
+                        ? isLoading
+                          ? "Save..."
+                          : "Save"
+                        : isLoading
+                        ? "Send..."
+                        : "Send"}
                     </Button>
                   </div>
                 </form>
@@ -464,6 +531,4 @@ const EditVocabulary: React.FC<EditVocabularyProps> = ({
       </div>
     </Dialog>
   );
-};
-
-export default EditVocabulary;
+}

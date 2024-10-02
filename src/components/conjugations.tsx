@@ -2,13 +2,13 @@
 
 import React from "react";
 import FloatSeparator from "./float-separator";
+import axios from "axios";
 import AudioBtn from "./audio-btn";
 import { GetQueryConjugationType } from "@/types/type";
 import { useQuery } from "react-query";
-import axios from "axios";
-import { API_BASE_URL } from "@/constants";
 import { createId } from "@paralleldrive/cuid2";
 import { Skeleton } from "./ui/skeleton";
+import { API_UTILS_URL } from "@/constants";
 
 type Props = {
   id: string;
@@ -51,13 +51,13 @@ const Loading = () => {
   );
 };
 
-const Conjugations: React.FC<Props> = ({ id }) => {
+export default function Conjugations({ id }: Props) {
   const { data, isLoading } = useQuery<GetQueryConjugationType>({
     queryKey: [`vocabularies/conjugation/${id}`],
     queryFn: async () => {
-      const res = await axios.post(`${API_BASE_URL}/vocabularies/conjugation`, {
-        id,
-      });
+      const res = await axios.get(
+        `${API_UTILS_URL}/vocabularies/${id}/conjugation`
+      );
       return res.data.data;
     },
   });
@@ -79,9 +79,9 @@ const Conjugations: React.FC<Props> = ({ id }) => {
                     {each_types.conjugations.map((conjugation) => (
                       <div className="flex items-center" key={createId()}>
                         <p className="text-zinc-700 dark:text-zinc-400">
-                          {conjugation.conjugated}
+                          {conjugation?.conjugated}
                         </p>
-                        {conjugation.conjugated && (
+                        {conjugation?.conjugated && (
                           <AudioBtn text={conjugation.conjugated} />
                         )}
                       </div>
@@ -95,6 +95,4 @@ const Conjugations: React.FC<Props> = ({ id }) => {
       )}
     </div>
   );
-};
-
-export default Conjugations;
+}
