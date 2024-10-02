@@ -3,12 +3,12 @@ import AudioBtn from "@/components/audio-btn";
 import Link from "next/link";
 import FloatSeparator from "@/components/float-separator";
 import Conjugations from "@/components/conjugations";
+import BackButton from "@/components/back-button";
 import { fetchData } from "@/lib/queries";
 import { GetQueryVocabByIdType } from "@/types/type";
-import { ArrowLeft } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { id as ina } from "date-fns/locale";
+import { id as idn } from "date-fns/locale";
 
 const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
   const data: GetQueryVocabByIdType = await fetchData(`/vocabularies/${id}`, [
@@ -17,10 +17,7 @@ const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
 
   return (
     <section className="min-h-screen py-10">
-      <Link href="/kosa-kata" className="flex gap-1 items-center">
-        <ArrowLeft size={20} />
-        <span className="underline">Kembali</span>
-      </Link>
+      <BackButton />
 
       <div className="mt-10 py-8 px-6 md:px-10 lg:px-14 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 relative border rounded-lg">
         <div className="flex items-center justify-between gap-6">
@@ -78,11 +75,11 @@ const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
           </div>
         )}
 
-        {data.isConjugated === 1 && <Conjugations id={data.id} />}
+        {!!data.predicate && <Conjugations id={data.id} />}
 
         <p className="mt-10 text-sm text-zinc-700 dark:text-zinc-400">
           {`Dibuat pada ${format(data.createdAt, "PPPP", {
-            locale: ina,
+            locale: idn,
           })} oleh`}{" "}
           <Link
             className="capitalize underline"

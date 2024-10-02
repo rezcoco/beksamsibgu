@@ -1,15 +1,11 @@
-import { Skeleton } from "@/components/ui/skeleton";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
 import React from "react";
+import BackButton from "@/components/back-button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Loading = () => {
   return (
     <section className="min-h-screen py-10">
-      <Link href="/kosa-kata" className="flex gap-1 items-center">
-        <ArrowLeft size={20} />
-        <span className="underline">Kembali</span>
-      </Link>
+      <BackButton />
 
       <div className="mt-10 py-8 px-6 md:px-10 lg:px-14 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 relative border rounded-lg">
         <div className="flex items-center justify-between gap-6">
