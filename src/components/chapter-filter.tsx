@@ -24,6 +24,8 @@ import {
   CommandList,
 } from "./ui/command";
 import { cn } from "@/lib/utils";
+import { useQuery } from "react-query";
+import { axiosRequest } from "@/lib/queries";
 
 type Props = {
   query: string;
@@ -61,6 +63,13 @@ export default function ChapterFilter({ query, totalFilter }: Props) {
   const pathname = usePathname();
   const router = useRouter();
   const queryParams = new URLSearchParams(query);
+
+  const {} = useQuery({
+    queryKey: ["/tags"],
+    queryFn: async () => {
+      const res = axiosRequest.get("/tags");
+    },
+  });
 
   function reducer(state: ReducerValueType, action: ReducerActionType) {
     return { ...state, ...action };

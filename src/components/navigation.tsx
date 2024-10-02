@@ -10,8 +10,11 @@ import { allowedRoles } from "@/constants";
 import {
   Award,
   Book,
+  BookOpen,
+  FileArchive,
   House,
   LayoutDashboard,
+  ScrollText,
   Trophy,
   User,
 } from "lucide-react";
@@ -130,16 +133,21 @@ export const navigation: Array<NavGroup> = [
       {
         title: "Panduan Kosa Kata",
         href: "/panduan-kosa-kata",
-        icon: House,
+        icon: BookOpen,
         isProtected: false,
       },
       {
         title: "Resources",
         href: "/resources",
-        icon: House,
+        icon: FileArchive,
         isProtected: false,
       },
-      { title: "Credits", href: "/credits", icon: House, isProtected: false },
+      {
+        title: "Credits",
+        href: "/credits",
+        icon: ScrollText,
+        isProtected: false,
+      },
     ],
   },
 ];

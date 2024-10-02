@@ -5,6 +5,7 @@ import { fetchData } from "@/lib/queries";
 import Image from "next/image";
 import React from "react";
 import Loading from "./loading";
+import Link from "next/link";
 
 export default async function TopContributors() {
   const data: {
@@ -51,15 +52,20 @@ export default async function TopContributors() {
                       )}
                     </TableCell>
 
-                    <TableCell className="flex items-center gap-3">
-                      <Image
-                        className="rounded-full"
-                        src={value.picture ?? ""}
-                        width={30}
-                        height={30}
-                        alt={fullname}
-                      />
-                      <p className="font-medium capitalize">{fullname}</p>
+                    <TableCell>
+                      <Link
+                        className="flex items-center gap-3 hover:underline-offset-2 hover:underline"
+                        href={`/profile/${value.username}`}
+                      >
+                        <Image
+                          className="rounded-full"
+                          src={value.picture ?? ""}
+                          width={30}
+                          height={30}
+                          alt={fullname}
+                        />
+                        <p className="font-medium capitalize">{fullname}</p>
+                      </Link>
                     </TableCell>
 
                     <TableCell className="font-medium text-orange-400 text-center">
