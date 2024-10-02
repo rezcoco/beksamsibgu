@@ -19,7 +19,7 @@ export default function Home() {
           </p>
           <div className="not-prose mb-16 mt-6 flex gap-3">
             <Button href="/kosa-kata" arrow="right">
-              <>Explore kosa kata</>
+              Explore kosa kata
             </Button>
           </div>
         </div>
