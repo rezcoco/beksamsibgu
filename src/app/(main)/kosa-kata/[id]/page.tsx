@@ -9,11 +9,12 @@ import { GetQueryVocabByIdType } from "@/types/type";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { id as idn } from "date-fns/locale";
+import { notFound } from "next/navigation";
 
 const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
   const data: GetQueryVocabByIdType = await fetchData(`/vocabularies/${id}`, [
     `/vocabularies/${id}`,
-  ]);
+  ]).catch(() => notFound());
 
   return (
     <section className="min-h-screen py-10">

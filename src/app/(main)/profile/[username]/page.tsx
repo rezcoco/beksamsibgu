@@ -26,6 +26,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import React from "react";
 import { axiosRequest } from "@/lib/queries";
+import { notFound } from "next/navigation";
 
 type Achievement = {
   id: string;
@@ -42,7 +43,7 @@ export default async function Profile({
   const [u, a] = await Promise.all([
     axiosRequest.get(`/users/${username}?isUsername=true`),
     axiosRequest.get(`/users/${username}/achievements?isUsername=true`),
-  ]);
+  ]).catch(() => notFound());
 
   const userInfo: GetQueryUserType = u.data?.data;
 

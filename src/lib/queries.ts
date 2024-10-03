@@ -1,7 +1,7 @@
 import { API_BASE_URL } from "@/constants";
 import axios from "axios";
 
-export async function fetchData(path: string, tags: string[]) {
+export async function fetchData(path: string, tags?: string[]) {
   try {
     const res = await fetch(API_BASE_URL + path, {
       next: { tags },
@@ -9,27 +9,16 @@ export async function fetchData(path: string, tags: string[]) {
         "Accept": "application/json"
       }
     })
+
+    if (!res.ok) {
+      throw new Error(res.statusText, { cause: res })
+    }
+
     const json = await res.json()
     return json.data
-  } catch (error) {
+  } catch (error: any) {
     console.error(error)
-    return []
-  }
-}
-
-export async function fetchVocabById(id: string, tags: string[]) {
-  try {
-    const res = await fetch(API_BASE_URL + `/vocabularies/${id}`, {
-      next: { tags }, headers: {
-        "Accept": "application/json"
-      }
-    })
-    const json = await res.json()
-
-    return json.data
-  } catch (error) {
-    console.error(error)
-    return []
+    throw new Error(error?.message, { cause: error })
   }
 }
 
