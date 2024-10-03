@@ -5,7 +5,7 @@ const Loading = () => {
   return (
     <div className="min-h-screen my-10">
       <div className="mb-10">
-        <p className="text-xl font-bold">Kosa Kata</p>
+        <p className="text-2xl font-bold">Kosa Kata</p>
         <p className="text-sm text-zinc-700 dark:text-zinc-400">
           Kumpulan kosa kata yang ditambahkan pengguna
         </p>

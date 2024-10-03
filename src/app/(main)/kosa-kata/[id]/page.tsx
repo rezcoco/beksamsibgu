@@ -20,32 +20,38 @@ const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
       <BackButton />
 
       <div className="mt-10 py-8 px-6 md:px-10 lg:px-14 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 relative border rounded-lg">
-        <div className="flex items-center justify-between gap-6">
-          <div>
-            <p className="text-4xl font-bold">{data.hangeul}</p>
-            <div className="flex flex-wrap items-center md:gap-2 mt-2">
-              <div className="flex items-center">
-                <p className="text-zinc-700 dark:text-zinc-400 italic">{`[${data.romanization}]`}</p>
-                <AudioBtn text={data.hangeul} />
-              </div>
-              <div className="flex items-center">
-                <p className="text-zinc-700 dark:text-zinc-400">{`[${data.pronunciation}]`}</p>
-                <AudioBtn text={data.hangeul} />
-              </div>
+        <div>
+          <p className="text-4xl font-bold">{data.hangeul}</p>
+          <div className="flex flex-wrap items-center md:gap-2 mt-2">
+            <div className="flex items-center">
+              <p className="text-zinc-700 dark:text-zinc-400 italic">{`[${data.romanization}]`}</p>
+              <AudioBtn text={data.hangeul} />
             </div>
-            <p className="text-zinc-700 dark:text-zinc-400 mt-2">
-              1. {data.translation}
-            </p>
-            {data.reference && (
-              <p className="text-zinc-700 dark:text-zinc-400">
-                2. {data.reference}
-              </p>
-            )}
+            <div className="flex items-center">
+              <p className="text-zinc-700 dark:text-zinc-400">{`[${data.pronunciation}]`}</p>
+              <AudioBtn text={data.hangeul} />
+            </div>
           </div>
 
-          <Badge className="text-center bg-emerald-500/10 text-[12px] text-emerald-500 border border-emerald-500 md:text-sm hover:bg-emerald-500/10 rounded-lg">
-            {data.chapter ? `Bab ${data.chapter}` : "Acak"}
-          </Badge>
+          <p className="text-zinc-700 dark:text-zinc-400 mt-2">
+            1. {data.translation}
+          </p>
+          {data.reference && (
+            <p className="text-zinc-700 dark:text-zinc-400">
+              2. {data.reference}
+            </p>
+          )}
+
+          <div className="space-x-2 mt-2">
+            <Badge className="mt-2 text-[11px] hover:bg-emerald-500/10 rounded-md border border-emerald-500 text-emerald-500 bg-emerald-500/10">
+              {data.chapter ? `Bab ${data.chapter}` : "Acak"}
+            </Badge>
+            {data.tag && (
+              <Badge className="mt-2 text-[11px] rounded-md hover:bg-emerald-500/10 capitalize border-emerald-500 text-emerald-500 bg-emerald-500/10">
+                {data.tag.name}
+              </Badge>
+            )}
+          </div>
         </div>
 
         {data.note && (

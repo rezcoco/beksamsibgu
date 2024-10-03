@@ -8,23 +8,20 @@ const Loading = () => {
       <BackButton />
 
       <div className="mt-10 py-8 px-6 md:px-10 lg:px-14 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 relative border rounded-lg">
-        <div className="flex items-center justify-between gap-6">
-          <div>
-            <Skeleton className="h-14 w-40" />
-            <div className="flex flex-wrap items-center gap-2 md:gap-2 mt-2">
-              <div className="flex gap-1">
-                <Skeleton className="h-9 w-14" />
-                <Skeleton className="h-5 w-5 rounded-full" />
-              </div>
-              <div className="flex gap-1">
-                <Skeleton className="h-9 w-14" />
-                <Skeleton className="h-5 w-5 rounded-full" />
-              </div>
+        <div>
+          <Skeleton className="h-14 w-40" />
+          <div className="flex flex-wrap items-center gap-2 md:gap-2 mt-2">
+            <div className="flex gap-1">
+              <Skeleton className="h-9 w-14" />
+              <Skeleton className="h-5 w-5 rounded-full" />
             </div>
-            <Skeleton className="h-6 mt-2 w-24" />
-            <Skeleton className="h-6 mt-1 w-16" />
+            <div className="flex gap-1">
+              <Skeleton className="h-9 w-14" />
+              <Skeleton className="h-5 w-5 rounded-full" />
+            </div>
           </div>
-          <Skeleton className="h-6 w-14" />
+          <Skeleton className="h-6 mt-2 w-24" />
+          <Skeleton className="h-6 mt-1 w-16" />
         </div>
 
         <div className="mt-8">

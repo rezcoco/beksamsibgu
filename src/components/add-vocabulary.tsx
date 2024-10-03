@@ -38,9 +38,11 @@ import Link from "next/link";
 import { createId } from "@paralleldrive/cuid2";
 import { axiosRequest } from "@/lib/queries";
 import { toastError } from "@/lib/utils";
+import { useQueryClient } from "react-query";
 
 const AddVocabulary = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { isSignedIn, userId, getToken } = useAuth();
   const [open, setOpen] = React.useState(false);
   const [openChapter, setOpenChapter] = React.useState(false);
@@ -170,6 +172,7 @@ const AddVocabulary = () => {
       console.log(values);
 
       await revalidate("/kosa-kata");
+      await queryClient.refetchQueries({ queryKey: ["tags"] });
       toast.success("Berhasil menambahkan", { duration: 2500 });
     } catch (error: any) {
       const status = error?.response?.status;

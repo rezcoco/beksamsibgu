@@ -49,6 +49,7 @@ const KosaKata = async ({ searchParams }: { searchParams: SearchParams }) => {
 
         {data.total > 0 && (
           <PagePagination
+            className="mt-8"
             queryString={query}
             totalRecord={data.total}
             currentPage={page}
