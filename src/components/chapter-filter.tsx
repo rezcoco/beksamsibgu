@@ -208,7 +208,7 @@ export default function ChapterFilter({ query }: Props) {
               <CommandInput
                 value={searchTag}
                 onValueChange={(value) => setSearchTag(value)}
-                placeholder="Cari bab..."
+                placeholder="Cari tag..."
               />
               <CommandList>
                 <CommandEmpty>Tag tidak ditemukan</CommandEmpty>
@@ -221,13 +221,13 @@ export default function ChapterFilter({ query }: Props) {
                           key={tag.id}
                           value={tag.id}
                         >
+                          {tag.name}
                           <Check
                             className={cn(
-                              "mr-2 h-4 w-4",
+                              "ml-2 h-4 w-4",
                               tag.id === state.tag ? "opacity-100" : "opacity-0"
                             )}
                           />
-                          {tag.name}
                         </CommandItem>
                       );
                     })

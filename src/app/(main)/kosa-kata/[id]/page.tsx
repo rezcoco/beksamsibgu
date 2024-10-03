@@ -43,7 +43,7 @@ const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
             )}
           </div>
 
-          <Badge className="text-center bg-emerald-500 text-[12px] text-white md:text-sm hover:bg-emerald-500 rounded-lg">
+          <Badge className="text-center bg-emerald-500/10 text-[12px] text-emerald-500 border border-emerald-500 md:text-sm hover:bg-emerald-500/10 rounded-lg">
             {data.chapter ? `Bab ${data.chapter}` : "Acak"}
           </Badge>
         </div>

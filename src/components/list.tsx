@@ -34,11 +34,11 @@ export default function List({ data }: Props) {
                 {value.translation}
               </p>
               <div className="space-x-2">
-                <Badge className="mt-2 text-[11px] rounded-md border border-emerald-500 text-emerald-500 bg-emerald-500/10 hover:bg-emerald-500">
+                <Badge className="mt-2 text-[11px] hover:bg-emerald-500/10 rounded-md border border-emerald-500 text-emerald-500 bg-emerald-500/10">
                   {value.chapter ? `Bab ${value.chapter}` : "Acak"}
                 </Badge>
                 {value.tag && (
-                  <Badge className="mt-2 text-[11px] rounded-md capitalize border-emerald-500 text-emerald-500 bg-emerald-500/10">
+                  <Badge className="mt-2 text-[11px] rounded-md hover:bg-emerald-500/10 capitalize border-emerald-500 text-emerald-500 bg-emerald-500/10">
                     {value.tag.name}
                   </Badge>
                 )}
