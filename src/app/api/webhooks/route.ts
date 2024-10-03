@@ -1,10 +1,10 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
-import { WebhookEvent } from '@clerk/nextjs/server'
-import { API_BASE_URL } from "@/constants"
-import axios from "axios"
+import { auth, WebhookEvent } from '@clerk/nextjs/server'
+import { axiosRequest } from "@/lib/queries"
 
 export async function POST(req: Request) {
+  const { getToken } = auth()
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
 
@@ -53,13 +53,29 @@ export async function POST(req: Request) {
   const eventType = evt.type
   if (eventType === "user.created") {
     try {
-      await axios.post(API_BASE_URL + "/users", {
+      await axiosRequest.post("/users", {
         firstName: evt.data.first_name,
         lastName: evt.data.last_name,
         email: evt.data.email_addresses[0].email_address,
         username: evt.data.username,
         picture: evt.data.image_url,
         id: evt.data.id
+      })
+    } catch (error: any) {
+      console.log(error?.response.data)
+    }
+  } else if (eventType === "user.updated") {
+    try {
+      await axiosRequest.put(`/users/${evt.data.id}`, {
+        firstName: evt.data.first_name,
+        lastName: evt.data.last_name,
+        email: evt.data.email_addresses[0].email_address,
+        username: evt.data.username,
+        picture: evt.data.image_url,
+      }, {
+        headers: {
+          Authorization: `Bearer ${await getToken()}`
+        }
       })
     } catch (error: any) {
       console.log(error?.response.data)

@@ -94,11 +94,10 @@ export default async function Profile({
   };
 
   return (
-    <div className="my-10 space-y-8 min-h-screen">
-      {/* TODO add default profile picture */}
+    <section className="my-10 space-y-8 min-h-screen">
       <div className="flex flex-col lg:flex-row gap-5">
         <Image
-          src={userInfo.picture}
+          src={userInfo.picture ?? "/default-profile.svg"}
           width={140}
           height={140}
           alt={`${userInfo.firstName} ${userInfo.lastName}`}
@@ -266,6 +265,6 @@ export default async function Profile({
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+    </section>
   );
 }

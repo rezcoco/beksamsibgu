@@ -10,31 +10,17 @@ type SearchParams = {
   page: string | undefined;
   createdByUser: boolean | undefined;
   tab: ("list" | "table") | undefined;
-};
+  tag: string | undefined;
+} & URLSearchParams;
 
 const KosaKata = async ({ searchParams }: { searchParams: SearchParams }) => {
   const { getToken } = auth();
-  const chapter = searchParams.chapter;
-  const createdByUser = searchParams.createdByUser;
   const page = searchParams.page ? Number(searchParams.page) : 1;
-  const tab = searchParams.tab;
-  const queryObj: Record<string, any> = { page };
-  let totalFilter = 0;
+  const sp = new URLSearchParams(searchParams);
 
-  if (chapter) {
-    queryObj["chapter"] = chapter;
-    totalFilter++;
-  }
-  if (createdByUser) {
-    queryObj["createdByUser"] = createdByUser;
-    totalFilter++;
-  }
+  sp.set("page", String(page));
 
-  if (tab) {
-    queryObj["tab"] = tab;
-  }
-
-  const query = new URLSearchParams(queryObj).toString();
+  const query = sp.toString();
   const url = `/vocabularies?${query}`;
 
   const res = await axiosRequest.get(url, {
@@ -49,28 +35,26 @@ const KosaKata = async ({ searchParams }: { searchParams: SearchParams }) => {
   } = res.data.data;
 
   return (
-    <section className="min-h-screen my-10">
-      <div>
-        <div className="mb-10">
-          <p className="text-2xl font-bold">Kosa Kata</p>
-          <p className="text-sm text-zinc-700 dark:text-zinc-400">
-            Kumpulan kosa kata yang ditambahkan pengguna
-          </p>
+    <section className="my-10">
+      <div className="flex flex-col min-h-screen justify-between">
+        <div>
+          <div className="mb-10">
+            <p className="text-2xl font-bold">Kosa Kata</p>
+            <p className="text-sm text-zinc-700 dark:text-zinc-400">
+              Kumpulan kosa kata yang ditambahkan pengguna
+            </p>
+          </div>
+          <ListTabs data={data.vocabularies} query={query} />
         </div>
-        <ListTabs
-          totalFilter={totalFilter}
-          data={data.vocabularies}
-          query={query}
-        />
-      </div>
 
-      {data.total > 0 && (
-        <PagePagination
-          queryString={query}
-          totalRecord={data.total}
-          currentPage={page}
-        />
-      )}
+        {data.total > 0 && (
+          <PagePagination
+            queryString={query}
+            totalRecord={data.total}
+            currentPage={page}
+          />
+        )}
+      </div>
     </section>
   );
 };

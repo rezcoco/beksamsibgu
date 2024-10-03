@@ -10,12 +10,11 @@ import AddVocabulary from "./add-vocabulary";
 import ListTable from "./list-table";
 
 type Props = {
-  totalFilter: number;
   data: GetQueryVocabType[];
   query: string;
 };
 
-export default function ListTabs({ data, query, totalFilter }: Props) {
+export default function ListTabs({ data, query }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = new URLSearchParams(query);
@@ -31,7 +30,7 @@ export default function ListTabs({ data, query, totalFilter }: Props) {
     <Tabs defaultValue={activeTab} onValueChange={onTabChange}>
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-3">
-          <ChapterFilter totalFilter={totalFilter} query={query} />
+          <ChapterFilter query={query} />
           <TabsList>
             <TabsTrigger value="list">List</TabsTrigger>
             <TabsTrigger value="table">Table</TabsTrigger>

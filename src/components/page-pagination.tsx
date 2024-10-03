@@ -14,12 +14,14 @@ type Props = {
   totalRecord: number;
   currentPage: number;
   queryString: string | undefined;
+  className?: string;
 };
 
 const PagePagination: React.FC<Props> = ({
   totalRecord,
   currentPage,
   queryString,
+  className,
 }) => {
   const totalPerPage = 20;
   const totalPage =
@@ -41,7 +43,7 @@ const PagePagination: React.FC<Props> = ({
   }
 
   return (
-    <Pagination className="mt-10">
+    <Pagination className={className}>
       <PaginationContent>
         {currentPage > 1 && (
           <PaginationItem>

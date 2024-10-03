@@ -107,7 +107,16 @@ export type GetQueryEditSuggestionsType = GetQueryVocabType & {
     lastName: string
     username: string
   };
-  originVocabulary: GetQueryVocabType
+  tag: {
+    id: string
+    name: string
+  }
+  originVocabulary: GetQueryVocabType & {
+    tag: {
+      id: string
+      name: string
+    }
+  }
   vocabularyHistory: null | GetQueryVocabType & {
     vocabularyId: string
     editSuggestionId: string

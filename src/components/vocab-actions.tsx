@@ -39,6 +39,7 @@ import {
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
+  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
@@ -336,6 +337,9 @@ export default function VocabActions({ data, type = "list" }: Props) {
             <AlertDialogTitle>
               Apakah kamu yakin akan menghapus?
             </AlertDialogTitle>
+            <AlertDialogDescription>
+              tindakan ini tidak bisa dibatalkan
+            </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Batal</AlertDialogCancel>

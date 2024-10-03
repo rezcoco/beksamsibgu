@@ -103,6 +103,7 @@ export default function EditSuggestionsTableActions({
       data.status === "approved" && data.vocabularyHistory
         ? data.vocabularyHistory
         : data.originVocabulary;
+
     const before =
       key === "tag" ? originalVocabulary[key]?.name : originalVocabulary[key];
     const after = key === "tag" ? data[key]?.name : data[key];
@@ -209,6 +210,7 @@ export default function EditSuggestionsTableActions({
       toast.success("Berhasil");
       if (status === 2) {
         await revalidate("/kosa-kata");
+        await revalidate(`/kosa-kata/${data.vocabularyId}`);
       }
     } catch (error: any) {
       const status = error?.response?.status;
@@ -276,6 +278,7 @@ export default function EditSuggestionsTableActions({
             {generateComparison("Contoh Kalimat", "sentenceEx")}
             {generateComparison("Catatan", "note")}
             {generateComparison("Bab", "chapter")}
+            {generateComparison("Tag", "tag")}
             {generateComparison("Referensi", "reference")}
           </ScrollArea>
           {data.status === "pending" && (

@@ -157,15 +157,7 @@ const AddVocabulary = () => {
       await axiosRequest.post(
         "/vocabularies",
         {
-          hangeul: values.hangeul || undefined,
-          translation: values.translation || undefined,
-          note: values.note || undefined,
-          sentenceEx: values.sentenceEx || undefined,
-          translationEx: values.translationEx || undefined,
-          reference: values.reference || undefined,
-          chapter: values.chapter,
-          isRegular: values.isRegular,
-          predicate: values.predicate || undefined,
+          ...values,
           authorId: userId,
         },
         {
@@ -174,6 +166,8 @@ const AddVocabulary = () => {
           },
         }
       );
+
+      console.log(values);
 
       await revalidate("/kosa-kata");
       toast.success("Berhasil menambahkan", { duration: 2500 });

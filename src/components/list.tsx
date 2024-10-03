@@ -33,9 +33,16 @@ export default function List({ data }: Props) {
               <p className="text-sm text-zinc-700 dark:text-zinc-400 line-clamp-1">
                 {value.translation}
               </p>
-              <Badge className="mt-2 text-[11px] rounded-md bg-emerald-500 text-white hover:bg-emerald-500">
-                {value.chapter ? `Bab ${value.chapter}` : "Acak"}
-              </Badge>
+              <div className="space-x-2">
+                <Badge className="mt-2 text-[11px] rounded-md border border-emerald-500 text-emerald-500 bg-emerald-500/10 hover:bg-emerald-500">
+                  {value.chapter ? `Bab ${value.chapter}` : "Acak"}
+                </Badge>
+                {value.tag && (
+                  <Badge className="mt-2 text-[11px] rounded-md capitalize border-emerald-500 text-emerald-500 bg-emerald-500/10">
+                    {value.tag.name}
+                  </Badge>
+                )}
+              </div>
             </div>
             <Link
               href={`/kosa-kata/${value.id}`}

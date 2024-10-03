@@ -4,7 +4,6 @@ import { ACHIEVEMENTS, ACHIEVEMENTS_ICONS } from "@/constants";
 import { fetchData } from "@/lib/queries";
 import Image from "next/image";
 import React from "react";
-import Loading from "./loading";
 import Link from "next/link";
 
 export default async function TopContributors() {
@@ -17,8 +16,6 @@ export default async function TopContributors() {
     picture: string | null;
     totalVocabulary: number;
   }[] = await fetchData("/statistics/top-contributors", ["/top-contributors"]);
-
-  // return <Loading />;
 
   return (
     <section className="my-10 min-h-screen">
@@ -59,7 +56,7 @@ export default async function TopContributors() {
                       >
                         <Image
                           className="rounded-full"
-                          src={value.picture ?? ""}
+                          src={value.picture ?? "/default-profile.svg"}
                           width={30}
                           height={30}
                           alt={fullname}

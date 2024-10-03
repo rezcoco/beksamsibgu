@@ -134,23 +134,9 @@ export default function EditVocabulary({
       console.time("update");
       setIsLoading(true);
 
-      const body = Object.assign(values, {
+      await onSubmitCb({
+        ...values,
         authorId: userId,
-        hangeul: values.hangeul || undefined,
-        translation: values.translation || undefined,
-        note: values.note || undefined,
-        sentenceEx: values.sentenceEx || undefined,
-        translationEx: values.translationEx || undefined,
-        reference: values.reference || undefined,
-        chapter: values.chapter,
-        isRegular: values.isRegular,
-        predicate: values.predicate || undefined,
-      });
-
-      await onSubmitCb(body);
-
-      Object.entries(body).map(([Key, value]: any[]) => {
-        form.setValue(Key, value);
       });
     } catch (error) {
       const err = error as Error;
