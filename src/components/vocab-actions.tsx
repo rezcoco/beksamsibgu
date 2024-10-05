@@ -162,7 +162,7 @@ export default function VocabActions({ data, type = "list" }: Props) {
         }
       );
 
-      await sendNotification("report", userId as string);
+      sendNotification("report", userId as string);
       toast.success("Laporan dikirim");
     } catch (error: any) {
       const status = error?.response?.status;
@@ -210,9 +210,7 @@ export default function VocabActions({ data, type = "list" }: Props) {
           }
         );
 
-        await sendNotification("edit-suggestion", userId as string, [
-          data.authorId,
-        ]);
+        sendNotification("edit-suggestion", userId as string, [data.authorId]);
         toast.success("Berhasil mengirimkan saran");
       }
     } catch (error: any) {

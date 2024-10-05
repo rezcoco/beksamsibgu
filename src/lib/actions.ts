@@ -33,7 +33,7 @@ export async function sendNotification(workflowKey: string, actor: string, recip
     }
   }
 
-  return knockClient.workflows.trigger(workflowKey, {
+  await knockClient.workflows.trigger(workflowKey, {
     actor,
     recipients
   })
