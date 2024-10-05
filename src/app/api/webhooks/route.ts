@@ -1,12 +1,15 @@
 import { Webhook } from 'svix'
 import { headers } from 'next/headers'
-import { auth, WebhookEvent } from '@clerk/nextjs/server'
+import { WebhookEvent } from '@clerk/nextjs/server'
 import { axiosRequest } from "@/lib/queries"
+import { NextResponse } from "next/server"
+import { Knock } from "@knocklabs/node"
+import jwt from "jsonwebtoken"
 
 export async function POST(req: Request) {
-  const { getToken } = auth()
   // You can find this in the Clerk Dashboard -> Webhooks -> choose the endpoint
   const WEBHOOK_SECRET = process.env.WEBHOOK_SECRET
+  const privateKnockClient = new Knock(process.env.KNOCK_API_KEY!)
 
   if (!WEBHOOK_SECRET) {
     throw new Error('Please add WEBHOOK_SECRET from Clerk Dashboard to .env or .env.local')
@@ -61,11 +64,31 @@ export async function POST(req: Request) {
         picture: evt.data.image_url,
         id: evt.data.id
       })
+
+      privateKnockClient.workflows.trigger
+
+      await privateKnockClient.users.identify(evt.data.id, {
+        name: `${evt.data.first_name} ${evt.data.last_name}`,
+        username: evt.data.username,
+        email: evt.data.email_addresses[0].email_address,
+        avatar: evt.data.image_url
+      })
     } catch (error: any) {
-      console.log(error?.response.data)
+      console.error(error)
+      return NextResponse.json({
+        message: "Something went wrong",
+        name: "InternalServerError",
+        success: false
+      }, { status: 500 })
     }
   } else if (eventType === "user.updated") {
     try {
+
+      const token = jwt.sign({
+        userId: evt.data.id,
+        role: evt.data.public_metadata?.role
+      }, process.env.JWT_SECRET_KEY!, { expiresIn: "2m" })
+
       await axiosRequest.put(`/users/${evt.data.id}`, {
         firstName: evt.data.first_name,
         lastName: evt.data.last_name,
@@ -74,11 +97,23 @@ export async function POST(req: Request) {
         picture: evt.data.image_url,
       }, {
         headers: {
-          Authorization: `Bearer ${await getToken()}`
+          Authorization: `Bearer ${token}`
         }
       })
+
+      await privateKnockClient.users.identify(evt.data.id, {
+        name: `${evt.data.first_name} ${evt.data.last_name}`,
+        username: evt.data.username,
+        email: evt.data.email_addresses[0].email_address,
+        avatar: evt.data.image_url
+      })
     } catch (error: any) {
-      console.log(error?.response.data)
+      console.error(error)
+      return NextResponse.json({
+        message: "Something went wrong",
+        name: "InternalServerError",
+        success: false
+      }, { status: 500 })
     }
   }
 

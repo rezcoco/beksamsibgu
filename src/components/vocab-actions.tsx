@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { revalidate, revalidateByTag } from "@/lib/actions";
+import { revalidate, revalidateByTag, sendNotification } from "@/lib/actions";
 import EditVocabulary from "./edit-vocabulary";
 import toast from "react-hot-toast";
 import { GetQueryVocabType } from "@/types/type";
@@ -162,6 +162,7 @@ export default function VocabActions({ data, type = "list" }: Props) {
         }
       );
 
+      await sendNotification("report", userId as string);
       toast.success("Laporan dikirim");
     } catch (error: any) {
       const status = error?.response?.status;
@@ -208,6 +209,10 @@ export default function VocabActions({ data, type = "list" }: Props) {
             },
           }
         );
+
+        await sendNotification("edit-suggestion", userId as string, [
+          data.authorId,
+        ]);
         toast.success("Berhasil mengirimkan saran");
       }
     } catch (error: any) {

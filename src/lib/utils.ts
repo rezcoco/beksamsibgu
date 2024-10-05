@@ -21,3 +21,4 @@ export function toastError(status: number | undefined, toastId?: string) {
       toast.error("Terjadi kesalahan", { id: toastId });
   }
 }
+

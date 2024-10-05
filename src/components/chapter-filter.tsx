@@ -64,6 +64,8 @@ export default function ChapterFilter({ query }: Props) {
   if (queryParams.has("page")) totalFilter -= 1;
   if (queryParams.has("tab")) totalFilter -= 1;
 
+  queryParams.delete("page");
+
   const { data } = useQuery<{
     total: number;
     tags: {
