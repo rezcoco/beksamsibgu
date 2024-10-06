@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   if (!clerk.sessionId) return new NextResponse("Unauthorized", { status: 401 })
 
   try {
-    const token = await Knock.signUserToken(clerk.userId)
+    const token = await Knock.signUserToken(clerk.userId, { signingKey: process.env.KNOCK_SIGNING_KEY })
 
     return NextResponse.json({
       token,

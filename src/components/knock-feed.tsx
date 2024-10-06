@@ -16,7 +16,7 @@ const KnockFeed: React.FC<PropsWithChildren> = ({ children }) => {
   const { userId, getToken } = useAuth();
   const [isVisible, setIsVisible] = React.useState(false);
   const notifButtonRef = React.useRef(null);
-  const { data: token } = useQuery<string>({
+  const { data: token, isLoading } = useQuery<string>({
     queryKey: "notificationToken",
     queryFn: async () => {
       const res = await axios.get("/api/notification-token", {
@@ -31,7 +31,9 @@ const KnockFeed: React.FC<PropsWithChildren> = ({ children }) => {
 
   if (!userId) return <>{children}</>;
 
-  return (
+  return isLoading ? (
+    <p>Loading...</p>
+  ) : (
     <KnockProvider
       apiKey={process.env.NEXT_PUBLIC_KNOCK_API_KEY!}
       userId={userId}
