@@ -14,10 +14,10 @@ import { notFound } from "next/navigation";
 export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const res: {
-    vocabularies: GetQueryVocabType[];
-  } = await fetchData("/vocabularies?pageSize=25");
-  return res.vocabularies.map((vocabulary) => ({
+  const res: GetQueryVocabType[] = await fetchData(
+    "/vocabularies/static-params"
+  );
+  return res.map((vocabulary) => ({
     id: vocabulary.id,
   }));
 }
