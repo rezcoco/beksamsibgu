@@ -75,6 +75,8 @@ export default function EditSuggestionsTableActions({
         : data.originVocabulary;
     const vocabulary = type === "before" ? originalVocabulary : data;
 
+    console.log(vocabulary);
+
     if (key === "predicate") {
       const irregular =
         vocabulary.isRegular === 1 ? "beraturan" : "tidak beraturan";
@@ -108,7 +110,22 @@ export default function EditSuggestionsTableActions({
       key === "tag" ? originalVocabulary[key]?.name : originalVocabulary[key];
     const after = key === "tag" ? data[key]?.name : data[key];
 
-    if (!before && key !== "chapter" && before !== after) {
+    const isBeforeEmpty = !before;
+    const isAfterEmpty = !after;
+    const isNotChapter = key !== "chapter";
+    const isAfterEmptyString = typeof after === "string" && after.length === 0;
+
+    if (isAfterEmpty && after !== before) {
+      return (
+        <div>
+          <p className="mt-4 text-sm mb-2 font-medium">{title}</p>
+          <div className="flex items-center gap-2 bg-red-200 dark:bg-[#3e2e34] px-3 py-1 rounded-md">
+            <Minus size={14} className="text-zinc-700 dark:text-zinc-400" />
+            <p className="text-sm">{generateComparisonText(key, "before")}</p>
+          </div>
+        </div>
+      );
+    } else if (isBeforeEmpty && isNotChapter && before !== after) {
       return (
         <div>
           <p className="mt-4 text-sm mb-2 font-medium">{title}</p>
@@ -226,7 +243,7 @@ export default function EditSuggestionsTableActions({
           userInfo.id,
           [data.authorId],
           {
-            editSuggestionId: data.id,
+            editSuggestionId: data.id.toUpperCase(),
           }
         );
       }
