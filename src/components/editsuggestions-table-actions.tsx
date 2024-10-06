@@ -29,7 +29,7 @@ import { useQueryClient } from "react-query";
 import toast from "react-hot-toast";
 import { toastError } from "@/lib/utils";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
-import { revalidate } from "@/lib/actions";
+import { revalidate, sendNotification } from "@/lib/actions";
 
 type Props = {
   data: GetQueryEditSuggestionsType;
@@ -209,8 +209,26 @@ export default function EditSuggestionsTableActions({
       await queryClient.refetchQueries({ queryKey });
       toast.success("Berhasil");
       if (status === 2) {
+        sendNotification(
+          "edit-suggestion-approve",
+          userInfo.id,
+          [data.authorId],
+          {
+            vocabularyId: data.vocabularyId,
+          }
+        );
+
         await revalidate("/kosa-kata");
         await revalidate(`/kosa-kata/${data.vocabularyId}`);
+      } else {
+        sendNotification(
+          "edit-suggestion-reject",
+          userInfo.id,
+          [data.authorId],
+          {
+            editSuggestionId: data.id,
+          }
+        );
       }
     } catch (error: any) {
       const status = error?.response?.status;

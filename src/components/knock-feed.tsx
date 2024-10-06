@@ -11,6 +11,7 @@ import { useAuth } from "@clerk/nextjs";
 import "@knocklabs/react/dist/index.css";
 import { useQuery } from "react-query";
 import axios from "axios";
+import { LoaderCircle } from "lucide-react";
 
 const KnockFeed: React.FC<PropsWithChildren> = ({ children }) => {
   const { userId, getToken } = useAuth();
@@ -32,7 +33,10 @@ const KnockFeed: React.FC<PropsWithChildren> = ({ children }) => {
   if (!userId) return <>{children}</>;
 
   return isLoading ? (
-    <p>Loading...</p>
+    <LoaderCircle
+      size={16}
+      className="mr-1 text-gray-200 dark:text-emerald-200 animate-spin"
+    />
   ) : (
     <KnockProvider
       apiKey={process.env.NEXT_PUBLIC_KNOCK_API_KEY!}

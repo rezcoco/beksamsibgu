@@ -14,7 +14,7 @@ export async function revalidateByTag(tag: string) {
   revalidateTag(tag)
 }
 
-export async function sendNotification(workflowKey: string, actor: string, recipients?: string[]) {
+export async function sendNotification(workflowKey: string, actor: string, recipients?: string[], data?: Record<string, any>) {
   const knockClient = new Knock(process.env.KNOCK_API_KEY)
   const clerk = auth()
 
@@ -35,6 +35,7 @@ export async function sendNotification(workflowKey: string, actor: string, recip
 
   await knockClient.workflows.trigger(workflowKey, {
     actor,
-    recipients
+    recipients,
+    data
   })
 }
