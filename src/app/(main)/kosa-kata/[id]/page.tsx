@@ -5,11 +5,23 @@ import FloatSeparator from "@/components/float-separator";
 import Conjugations from "@/components/conjugations";
 import BackButton from "@/components/back-button";
 import { fetchData } from "@/lib/queries";
-import { GetQueryVocabByIdType } from "@/types/type";
+import { GetQueryVocabByIdType, GetQueryVocabType } from "@/types/type";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { id as idn } from "date-fns/locale";
 import { notFound } from "next/navigation";
+
+export const revalidate = 3600;
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const res: {
+    vocabularies: GetQueryVocabType[];
+  } = await fetchData("/vocabularies?pageSize=25");
+  return res.vocabularies.map((vocabulary) => ({
+    id: vocabulary.id,
+  }));
+}
 
 const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
   const data: GetQueryVocabByIdType = await fetchData(`/vocabularies/${id}`, [

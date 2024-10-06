@@ -75,8 +75,6 @@ export default function EditSuggestionsTableActions({
         : data.originVocabulary;
     const vocabulary = type === "before" ? originalVocabulary : data;
 
-    console.log(vocabulary);
-
     if (key === "predicate") {
       const irregular =
         vocabulary.isRegular === 1 ? "beraturan" : "tidak beraturan";
