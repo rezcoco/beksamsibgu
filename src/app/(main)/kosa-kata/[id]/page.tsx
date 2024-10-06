@@ -12,7 +12,6 @@ import { id as idn } from "date-fns/locale";
 import { notFound } from "next/navigation";
 
 export const revalidate = 3600;
-export const dynamicParams = true;
 
 export async function generateStaticParams() {
   const res: {
