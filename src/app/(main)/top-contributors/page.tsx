@@ -1,12 +1,16 @@
 import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { ACHIEVEMENTS, ACHIEVEMENTS_ICONS } from "@/constants";
-import { fetchData } from "@/lib/queries";
+import { ACHIEVEMENTS, ACHIEVEMENTS_ICONS, API_BASE_URL } from "@/constants";
 import Image from "next/image";
 import React from "react";
 import Link from "next/link";
 
 export default async function TopContributors() {
+  const res = await fetch(`${API_BASE_URL}/statistics/top-contributors`, {
+    next: { revalidate: 60 },
+  });
+  const json = await res.json();
+
   const data: {
     id: string;
     firstName: string;
@@ -15,7 +19,7 @@ export default async function TopContributors() {
     reputation: number;
     picture: string | null;
     totalVocabulary: number;
-  }[] = await fetchData("/statistics/top-contributors", ["/top-contributors"]);
+  }[] = json.data;
 
   return (
     <section className="my-10 min-h-screen">

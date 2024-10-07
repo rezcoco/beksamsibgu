@@ -38,7 +38,7 @@ export default function Features() {
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-emerald-500">
-            Deploy faster
+            Features
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">
             Everything you need to deploy your app

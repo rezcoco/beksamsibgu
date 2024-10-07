@@ -1,5 +1,5 @@
 export const PRODUCTION_HOSTNAME_URL = process.env.NEXT_PUBLIC_VERCEL_PROJECT_PRODUCTION_URL
-export const API_BASE_URL = process.env.NODE_ENV === "development" ? "http://localhost:9898" : process.env.NEXT_PUBLIC_API_BASE_URL!
+export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL!
 export const API_UTILS_URL = process.env.NEXT_PUBLIC_API_UTILS_URL!
 export const PUBLIC_KNOCK_API_KEY = process.env.NEXT_PUBLIC_KNOCK_API_KEY!
 
