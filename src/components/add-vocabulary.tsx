@@ -80,10 +80,11 @@ const AddVocabulary = () => {
       const index = searchClient.initIndex("beksamsibgu");
       try {
         setIsSearch(true);
+
         const searchResult = await index.search<{
           hangeul: string;
-        }>(`${query}`, {
-          filters: `hangeul:${query}`,
+        }>(query, {
+          filters: `hangeul:"${query}"`,
         });
 
         if (searchResult.hits.length > 0) {
