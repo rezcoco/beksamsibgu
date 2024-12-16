@@ -238,12 +238,13 @@ export default function VocabActions({ data, type = "list" }: Props) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuSeparator />
           {type === "table" && (
             <>
-              <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link href={`/kosa-kata/${data.id}`}>Lihat</Link>
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
             </>
           )}
 
@@ -266,15 +267,13 @@ export default function VocabActions({ data, type = "list" }: Props) {
               >
                 Hapus
               </DropdownMenuItem>
+              <DropdownMenuSeparator />
             </>
           )}
           {data.authorId !== userId && (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onFeedback}>
-                Sarankan pengeditan
-              </DropdownMenuItem>
-            </>
+            <DropdownMenuItem onClick={onFeedback}>
+              Sarankan pengeditan
+            </DropdownMenuItem>
           )}
           <DropdownMenuItem onClick={onReportClicked}>
             Laporkan ke Admin

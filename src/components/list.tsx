@@ -28,7 +28,6 @@ export default function List({ data }: Props) {
                   </p>
                   <AudioBtn text={value.hangeul} />
                 </div>
-                <VocabActions data={value} />
               </div>
               <p className="text-sm text-zinc-700 dark:text-zinc-400 line-clamp-1">
                 {value.translation}

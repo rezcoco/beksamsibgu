@@ -14,8 +14,8 @@ export default function Home() {
           </h1>
           <p className="text-zinc-700 dark:text-zinc-400 leading-7 text-base mt-2">
             Proyek sukarela ini bertujuan untuk memudahkan pengorganisasian kosa
-            kata secara efisien, rapi dan mudah diakses. Melalui koleksi
-            kata-kata yang terstruktur dan fitur pencarian yang canggih.
+            kata secara efisien, rapi dan mudah diakses. Melalui koleksi kosa
+            kata yang terstruktur dan fitur pencarian yang canggih.
           </p>
           <div className="not-prose mb-16 mt-6 flex gap-3">
             <Button href="/kosa-kata" arrow="right">

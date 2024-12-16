@@ -42,7 +42,6 @@ type Autocomplete = AutocompleteApi<
 function useAutocomplete({ close }: { close: () => void }) {
   const id = useId();
   const router = useRouter();
-  const pathname = usePathname();
   const [autocompleteState, setAutocompleteState] = useState<
     AutocompleteState<Result> | EmptyObject
   >({});
@@ -52,7 +51,9 @@ function useAutocomplete({ close }: { close: () => void }) {
       return;
     }
 
-    router.replace(`${itemUrl}?from=${encodeURIComponent(pathname)}`);
+    router.replace(
+      `${itemUrl}?from=${encodeURIComponent(document.location.pathname)}`
+    );
 
     if (
       itemUrl ===
