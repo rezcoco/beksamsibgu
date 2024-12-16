@@ -48,6 +48,7 @@ export const Header = forwardRef<
   const isInsideMobileNavigation = useIsInsideMobileNavigation();
   const { resolvedTheme } = useTheme();
   const pathname = usePathname();
+  const theme = useTheme();
 
   const { scrollY } = useScroll();
   const bgOpacityLight = useTransform(scrollY, [0, 72], [0.5, 0.9]);
@@ -115,7 +116,7 @@ export const Header = forwardRef<
               className="hidden md:block ml-5"
               href={`/auth/sign-in?redirect_url=${encodeURIComponent(
                 pathname
-              )}`}
+              )}&theme=${theme.resolvedTheme}`}
             >
               Sign in
             </Button>

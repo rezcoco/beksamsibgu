@@ -44,6 +44,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
+import { useTheme } from "next-themes";
 
 type ReducerState = {
   open: boolean;
@@ -58,6 +59,7 @@ type Props = {
 export default function VocabActions({ data, type = "list" }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const theme = useTheme();
 
   const { isSignedIn, getToken } = useAuth();
   const { user } = useUser();
@@ -123,7 +125,9 @@ export default function VocabActions({ data, type = "list" }: Props) {
   async function onFeedback() {
     if (!isSignedIn) {
       return router.push(
-        `/auth/sign-in?redirect_url=${encodeURIComponent(pathname)}`
+        `/auth/sign-in?redirect_url=${encodeURIComponent(pathname)}&theme=${
+          theme.resolvedTheme
+        }`
       );
     }
 
@@ -136,7 +140,9 @@ export default function VocabActions({ data, type = "list" }: Props) {
   function onReportClicked() {
     if (!isSignedIn) {
       return router.push(
-        `/auth/sign-in?redirect_url=${encodeURIComponent(pathname)}`
+        `/auth/sign-in?redirect_url=${encodeURIComponent(pathname)}&theme=${
+          theme.resolvedTheme
+        }`
       );
     }
 

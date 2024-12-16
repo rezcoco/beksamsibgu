@@ -1,15 +1,12 @@
-"use client";
-
+import React from "react";
 import { SignUp } from "@clerk/nextjs";
 import { dark } from "@clerk/themes";
-import { useTheme } from "next-themes";
-import { useSearchParams } from "next/navigation";
-import React from "react";
 
-const SignUpPage = () => {
-  const { resolvedTheme } = useTheme();
-  const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get("redirectUrl");
+const SignUpPage = ({
+  searchParams: { redirect_url, theme = "dark" },
+}: {
+  searchParams: { [key: string]: string };
+}) => {
   return (
     <div className="min-h-screen flex justify-center items-center">
       <SignUp
@@ -17,9 +14,9 @@ const SignUpPage = () => {
           variables: {
             colorPrimary: "#34d399",
           },
-          baseTheme: resolvedTheme === "dark" ? dark : undefined,
+          baseTheme: theme === "dark" ? dark : undefined,
         }}
-        fallbackRedirectUrl={redirectUrl}
+        fallbackRedirectUrl={redirect_url}
         signInUrl="/auth/sign-in"
       />
     </div>

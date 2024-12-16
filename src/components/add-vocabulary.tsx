@@ -39,10 +39,12 @@ import { createId } from "@paralleldrive/cuid2";
 import { axiosRequest } from "@/lib/queries";
 import { toastError } from "@/lib/utils";
 import { useQueryClient } from "react-query";
+import { useTheme } from "next-themes";
 
 const AddVocabulary = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
+  const theme = useTheme();
   const { isSignedIn, userId, getToken } = useAuth();
   const [open, setOpen] = React.useState(false);
   const [openChapter, setOpenChapter] = React.useState(false);
@@ -145,9 +147,11 @@ const AddVocabulary = () => {
 
   function onAddButtonClicked() {
     if (!isSignedIn) {
-      return router.push(
-        "/auth/sign-in?redirect_url=" + encodeURIComponent("/kosa-kata")
-      );
+      return router.push(`
+        /auth/sign-in?redirect_url=${encodeURIComponent("/kosa-kata")}&theme=${
+        theme.resolvedTheme
+      }
+      `);
     }
 
     return setOpen((prevState) => !prevState);

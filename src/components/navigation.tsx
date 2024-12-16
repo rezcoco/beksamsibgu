@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "./ui/skeleton";
+import { useTheme } from "next-themes";
 
 interface NavGroup {
   title: string;
@@ -154,6 +155,7 @@ export const navigation: Array<NavGroup> = [
 
 export function Navigation(props: React.ComponentPropsWithoutRef<"nav">) {
   const pathname = usePathname();
+  const theme = useTheme();
 
   return (
     <nav className="min-h-full" {...props}>
@@ -170,7 +172,7 @@ export function Navigation(props: React.ComponentPropsWithoutRef<"nav">) {
             <Button
               href={`/auth/sign-in?redirect_url=${encodeURIComponent(
                 pathname
-              )}`}
+              )}&theme=${theme.resolvedTheme}`}
               variant="filled"
               className="w-full rounded-md"
             >
