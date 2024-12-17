@@ -13,11 +13,11 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { revalidate, revalidateByTag, sendNotification } from "@/lib/actions";
-import EditVocabulary from "./edit-vocabulary";
+import FormVocabulary from "./form-vocabulary";
 import toast from "react-hot-toast";
 import { GetQueryVocabType } from "@/types/type";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   Dialog,
   DialogHeader,
@@ -59,6 +59,7 @@ type Props = {
 export default function VocabActions({ data, type = "list" }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const theme = useTheme();
 
   const { isSignedIn, getToken } = useAuth();
@@ -92,11 +93,15 @@ export default function VocabActions({ data, type = "list" }: Props) {
   });
 
   async function onDeleteVocab() {
+    const tab = searchParams.get("tab");
+
     console.time("delete");
     setIsDeleteLoading(true);
     const toastId = toast.loading("Menunggu...");
 
     try {
+      if (tab !== "table") router.replace("/kosa-kata");
+
       await axiosRequest.delete(`/vocabularies/${data.id}`, {
         headers: {
           Authorization: `Bearer ${await getToken()}`,
@@ -104,6 +109,7 @@ export default function VocabActions({ data, type = "list" }: Props) {
       });
 
       await revalidate("/kosa-kata");
+
       toast.success("Berhasil dihapus", { id: toastId });
     } catch (error: any) {
       console.error(error);
@@ -194,6 +200,7 @@ export default function VocabActions({ data, type = "list" }: Props) {
   async function onSubmitEdit(body: any) {
     try {
       if (state.mode === "edit-vocabulary") {
+        console.log(body);
         await axiosRequest.put(`/vocabularies/${data.id}`, body, {
           headers: {
             Authorization: `Bearer ${await getToken()}`,
@@ -361,7 +368,7 @@ export default function VocabActions({ data, type = "list" }: Props) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <EditVocabulary
+      <FormVocabulary
         onSubmitCb={onSubmitEdit}
         data={data}
         mode={state.mode}

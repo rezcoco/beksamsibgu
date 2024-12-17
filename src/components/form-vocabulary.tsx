@@ -42,7 +42,7 @@ type Props = {
   onSubmitCb: (body: any) => Promise<void>;
 };
 
-export default function EditVocabulary({
+export default function FormVocabulary({
   onSubmitCb,
   open,
   setOpen,

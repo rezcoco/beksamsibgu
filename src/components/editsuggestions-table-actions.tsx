@@ -22,7 +22,7 @@ import {
   DialogTitle,
 } from "./ui/dialog";
 import { ScrollArea } from "./ui/scroll-area";
-import EditVocabulary from "./edit-vocabulary";
+import FormVocabulary from "./form-vocabulary";
 import { axiosRequest } from "@/lib/queries";
 import { useAuth } from "@clerk/nextjs";
 import { useQueryClient } from "react-query";
@@ -287,7 +287,7 @@ export default function EditSuggestionsTableActions({
           )}
         </DropdownMenuContent>
       </DropdownMenu>
-      <EditVocabulary
+      <FormVocabulary
         onSubmitCb={onEditSubmit}
         mode="edit-suggest"
         open={open}

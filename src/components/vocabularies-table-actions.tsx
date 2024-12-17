@@ -4,7 +4,7 @@ import { GetQueryVocabType } from "@/types/type";
 import { Edit, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import EditVocabulary from "./edit-vocabulary";
+import FormVocabulary from "./form-vocabulary";
 import { axiosRequest } from "@/lib/queries";
 import { useAuth } from "@clerk/nextjs";
 import toast from "react-hot-toast";
@@ -52,7 +52,7 @@ export default function VocabulariesTabActions({ data, queryKey }: Props) {
       >
         <ExternalLink size={16} />
       </Link>
-      <EditVocabulary
+      <FormVocabulary
         onSubmitCb={onSubmitEdit}
         open={open}
         setOpen={setOpen}
