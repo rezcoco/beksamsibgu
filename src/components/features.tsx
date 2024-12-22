@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import {
   ArrowUpIcon,
   ClockArrowUpIcon,
@@ -7,28 +8,28 @@ import {
 
 const features = [
   {
-    name: "Push to deploy",
+    name: "Pencarian Canggih",
     description:
-      "Morbi viverra dui mi arcu sed. Tellus semper adipiscing suspendisse semper morbi. Odio urna massa nunc massa.",
-    icon: ClockArrowUpIcon,
+      "Temukan kosakata yang Anda cari dengan cepat yang didukung oleh Algolia, lengkap dengan filter pintar dan peringkat relevansi.",
+    icon: " 🔍 ",
   },
   {
-    name: "SSL certificates",
+    name: "Konjugasi Otomatis",
     description:
-      "Sit quis amet rutrum tellus ullamcorper ultricies libero dolor eget. Sem sodales gravida quam turpis enim lacus amet.",
-    icon: LucideLock,
+      "Hemat waktu dengan konjugasi kata kerja dan kata sifat otomatis, disesuaikan untuk berbagai waktu, bentuk, dan tingkat kesopanan.",
+    icon: " 🌀",
   },
   {
-    name: "Simple queues",
+    name: "Pengelompokan Fleksibel",
     description:
-      "Quisque est vel vulputate cursus. Risus proin diam nunc commodo. Lobortis auctor congue commodo diam neque.",
-    icon: ArrowUpIcon,
+      "Kelola catatan Anda dengan mudah menggunakan tag atau bab, menciptakan sistem pembelajaran yang terstruktur",
+    icon: " 🗂️ ",
   },
   {
-    name: "Advanced security",
+    name: "Audio Pengucapan",
     description:
-      "Arcu egestas dolor vel iaculis in ipsum mauris. Tincidunt mattis aliquet hac quis. Id hac maecenas ac donec pharetra eget.",
-    icon: FingerprintIcon,
+      "Dengarkan pengucapan audio yang akurat untuk setiap kosakata yang didukung oleh Papago.",
+    icon: "🎧",
   },
 ];
 
@@ -38,15 +39,14 @@ export default function Features() {
       <div className="mx-auto max-w-7xl">
         <div className="mx-auto max-w-2xl lg:text-center">
           <h2 className="text-base font-semibold leading-7 text-emerald-500">
-            Features
+            Belajar Kosakata Korea dengan Efisien
           </h2>
           <p className="mt-2 text-3xl font-bold tracking-tight text-zinc-900 dark:text-white sm:text-4xl">
-            Everything you need to deploy your app
+            Solusi lengkap dalam mengelola kosakata
           </p>
           <p className="mt-6 text-lg leading-8 text-zinc-700 dark:text-zinc-400">
-            Quis tellus eget adipiscing convallis sit sit eget aliquet quis.
-            Suspendisse eget egestas a elementum pulvinar et feugiat blandit at.
-            In mi viverra elit nunc.
+            Berbagai fitur yang dibutuhkan untuk mencatat dan mengelola kosakata
+            dengan efisien dalam satu platform.
           </p>
         </div>
         <div className="mx-auto mt-16 max-w-2xl sm:mt-20 lg:mt-24 lg:max-w-4xl">
@@ -54,11 +54,8 @@ export default function Features() {
             {features.map((feature) => (
               <div key={feature.name} className="relative pl-16">
                 <dt className="text-base font-semibold leading-7 text-zinc-900 dark:text-white">
-                  <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-500">
-                    <feature.icon
-                      aria-hidden="true"
-                      className="h-6 w-6 text-white"
-                    />
+                  <div className="absolute left-0 top-0 flex h-10 w-10 items-center justify-center rounded-lg">
+                    <span>{feature.icon}</span>
                   </div>
                   {feature.name}
                 </dt>

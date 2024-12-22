@@ -1,11 +1,10 @@
 import React from "react";
-import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import VocabActions from "./vocab-actions";
-import { Badge } from "./ui/badge";
-import { GetQueryVocabType } from "@/types/type";
 import AudioBtn from "./audio-btn";
 import NoResultsIcon from "./no-result-icon";
+import { Badge } from "./ui/badge";
+import { GetQueryVocabType } from "@/types/type";
+import { ChevronRight } from "lucide-react";
 
 type Props = {
   data: GetQueryVocabType[];
@@ -33,13 +32,23 @@ export default function List({ data }: Props) {
                 {value.translation}
               </p>
               <div className="space-x-2">
-                <Badge className="mt-2 text-[11px] hover:bg-emerald-500/10 rounded-md border border-emerald-500 text-emerald-500 bg-emerald-500/10">
-                  {value.chapter ? `Bab ${value.chapter}` : "Acak"}
-                </Badge>
-                {value.tag && (
-                  <Badge className="mt-2 text-[11px] rounded-md hover:bg-emerald-500/10 capitalize border-emerald-500 text-emerald-500 bg-emerald-500/10">
-                    {value.tag.name}
+                {value.chapter ? (
+                  <a href={`/kosa-kata?chapter=${value.chapter}`}>
+                    <Badge className="mt-2 text-[11px] hover:bg-emerald-500/10 rounded-md border border-emerald-500 text-emerald-500 bg-emerald-500/10">
+                      {`Bab ${value.chapter}`}
+                    </Badge>
+                  </a>
+                ) : (
+                  <Badge className="mt-2 text-[11px] hover:bg-emerald-500/10 rounded-md border border-emerald-500 text-emerald-500 bg-emerald-500/10">
+                    Acak
                   </Badge>
+                )}
+                {value.tag && (
+                  <a href={`/kosa-kata?tag=${value.tag.id}`}>
+                    <Badge className="mt-2 text-[11px] rounded-md hover:bg-emerald-500/10 capitalize border-emerald-500 text-emerald-500 bg-emerald-500/10">
+                      {value.tag.name}
+                    </Badge>
+                  </a>
                 )}
               </div>
             </div>

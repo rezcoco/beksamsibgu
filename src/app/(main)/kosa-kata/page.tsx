@@ -44,7 +44,7 @@ const KosaKata = async ({ searchParams }: { searchParams: SearchParams }) => {
               Kumpulan kosa kata yang ditambahkan pengguna
             </p>
           </div>
-          <ListTabs data={data.vocabularies} query={query} />
+          <ListTabs data={data.vocabularies} />
         </div>
 
         {data.total > 0 && (

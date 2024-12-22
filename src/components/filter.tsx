@@ -2,7 +2,7 @@
 
 import React from "react";
 import { createId } from "@paralleldrive/cuid2";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Check, ListFilter } from "lucide-react";
 import {
   DropdownMenu,
@@ -27,10 +27,6 @@ import { cn } from "@/lib/utils";
 import { useQuery } from "react-query";
 import { axiosRequest } from "@/lib/queries";
 
-type Props = {
-  query: string;
-};
-
 type Reducer = {
   createdByUser: number | undefined;
   chapter: string | undefined;
@@ -42,8 +38,8 @@ type ReducerAction =
   | { createdByUser: number | undefined }
   | { tag: string | undefined };
 
-export default function ChapterFilter({ query }: Props) {
-  const searchParams = new URLSearchParams(query);
+export default function Filter() {
+  const searchParams = useSearchParams();
   const createdByUser = searchParams.get("createdByUser");
   const chapter = searchParams.get("chapter");
   const tag = searchParams.get("tag");
@@ -53,12 +49,11 @@ export default function ChapterFilter({ query }: Props) {
     chapter: chapter ?? "",
     tag: tag ?? "",
   });
-  const [searchChapter, setSearchChapter] = React.useState(state.chapter);
-  const [searchTag, setSearchTag] = React.useState(state.tag);
+
   const [openDropdown, setOpenDropdown] = React.useState(false);
   const pathname = usePathname();
   const router = useRouter();
-  const queryParams = new URLSearchParams(query);
+  const queryParams = new URLSearchParams(searchParams);
   let totalFilter = queryParams.size;
 
   if (queryParams.has("page")) totalFilter -= 1;
@@ -88,7 +83,6 @@ export default function ChapterFilter({ query }: Props) {
   function onChapterChange(value: string) {
     if (value === state.chapter) {
       dispatch({ chapter: "" });
-      setSearchChapter("");
       setOpenDropdown(false);
 
       queryParams.delete("chapter");
@@ -96,7 +90,6 @@ export default function ChapterFilter({ query }: Props) {
       router.replace(`${pathname}?${queryParams.toString()}`);
     } else {
       dispatch({ chapter: value });
-      setSearchChapter(value);
       setOpenDropdown(false);
 
       queryParams.set("chapter", value);
@@ -127,7 +120,7 @@ export default function ChapterFilter({ query }: Props) {
       dispatch({
         tag: undefined,
       });
-      setSearchTag("");
+      // setSearchTag("");
       setOpenDropdown(false);
 
       router.replace(`${pathname}?${queryParams.toString()}`);
@@ -137,7 +130,6 @@ export default function ChapterFilter({ query }: Props) {
       dispatch({
         tag: value,
       });
-      setSearchTag(value);
       setOpenDropdown(false);
 
       router.replace(`${pathname}?${queryParams.toString()}`);
@@ -171,8 +163,13 @@ export default function ChapterFilter({ query }: Props) {
           <DropdownMenuSubContent className="p-0 ml-2">
             <Command className="max-w-[150px]">
               <CommandInput
-                value={searchChapter}
-                onValueChange={(value) => setSearchChapter(value)}
+                value={chapter ?? undefined}
+                onValueChange={(value) =>
+                  dispatch({
+                    ...state,
+                    chapter: value,
+                  })
+                }
                 placeholder="Cari bab..."
               />
               <CommandList>
@@ -208,8 +205,13 @@ export default function ChapterFilter({ query }: Props) {
           <DropdownMenuSubContent className="p-0 ml-2">
             <Command className="max-w-[150px]">
               <CommandInput
-                value={searchTag}
-                onValueChange={(value) => setSearchTag(value)}
+                value={tag ?? undefined}
+                onValueChange={(value) =>
+                  dispatch({
+                    ...state,
+                    tag: value,
+                  })
+                }
                 placeholder="Cari tag..."
               />
               <CommandList>
