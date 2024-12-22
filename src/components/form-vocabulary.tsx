@@ -144,10 +144,10 @@ export default function FormVocabulary({
       const status = cause?.response?.status;
 
       toastError(status);
-      form.reset();
     } finally {
       console.timeEnd("update");
       setIsLoading(false);
+      form.reset(values);
       setOpen(false);
     }
   }
