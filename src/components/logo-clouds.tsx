@@ -8,7 +8,7 @@ export default function LogoClouds() {
   return (
     <div className="bg-white dark:bg-background">
       <div>
-        <h2 className="text-center text-lg font-bold leading-8 dark:text-white text-zinc-900">
+        <h2 className="text-center text-lg font-semibold leading-8 dark:text-white text-zinc-900">
           Menggunakan teknologi paling popular saat ini
         </h2>
         <div className="mx-auto mt-10 grid max-w-lg grid-cols-4 items-center gap-y-10 sm:max-w-xl sm:grid-cols-6 lg:mx-0 lg:max-w-none lg:grid-cols-5">
