@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 import { axiosRequest } from "@/lib/queries";
 import { notFound } from "next/navigation";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 type Achievement = {
   id: string;
@@ -97,13 +98,13 @@ export default async function Profile({
   return (
     <section className="my-10 space-y-8 min-h-screen">
       <div className="flex flex-col lg:flex-row gap-5">
-        <Image
-          src={userInfo.picture ?? "/default-profile.svg"}
-          width={140}
-          height={140}
-          alt={`${userInfo.firstName} ${userInfo.lastName}`}
-          className="rounded-full object-cover"
-        />
+        <Avatar className="h-[140px] w-[140px]">
+          <AvatarImage
+            alt={`${userInfo.firstName} ${userInfo.lastName}`}
+            src={userInfo.picture ?? "/default-profile.svg"}
+          />
+        </Avatar>
+
         <div className="mt-3">
           <div className="flex">
             <p className="font-bold text-2xl capitalize">

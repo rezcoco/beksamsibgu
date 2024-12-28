@@ -4,6 +4,7 @@ import { ACHIEVEMENTS, ACHIEVEMENTS_ICONS, API_BASE_URL } from "@/constants";
 import Image from "next/image";
 import React from "react";
 import Link from "next/link";
+import { Avatar, AvatarImage } from "@/components/ui/avatar";
 
 export default async function TopContributors() {
   const res = await fetch(`${API_BASE_URL}/statistics/top-contributors`, {
@@ -58,13 +59,12 @@ export default async function TopContributors() {
                         className="flex items-center gap-3 hover:underline-offset-2 hover:underline"
                         href={`/profile/${value.username}`}
                       >
-                        <Image
-                          className="rounded-full"
-                          src={value.picture ?? "/default-profile.svg"}
-                          width={30}
-                          height={30}
-                          alt={fullname}
-                        />
+                        <Avatar className="max-sm:w-[30px] max-sm:h-[30px]">
+                          <AvatarImage
+                            alt={fullname}
+                            src={value.picture ?? "/default-profile.svg"}
+                          />
+                        </Avatar>
                         <p className="font-medium capitalize">{fullname}</p>
                       </Link>
                     </TableCell>
