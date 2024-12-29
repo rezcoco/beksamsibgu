@@ -12,7 +12,6 @@ import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { ACHIEVEMENTS, ACHIEVEMENTS_ICONS, allowedRoles } from "@/constants";
 import { auth } from "@clerk/nextjs/server";
-import Image from "next/image";
 import ReportsTable from "@/components/reports-table";
 import VocabulariesTable from "@/components/vocabularies-table";
 import EditSuggestionsTable from "@/components/editsuggestions-table";

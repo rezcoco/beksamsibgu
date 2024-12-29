@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import { useQuery, useQueryClient } from "react-query";
 import { axiosRequest } from "@/lib/queries";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { GetQueryUserType, GetQueryVocabType } from "@/types/type";
 import { allowedRoles } from "@/constants";
 import { toastError } from "@/lib/utils";
@@ -56,6 +56,7 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 
 export default function VocabulariesTable({ userInfo, url }: Props) {
   const { userId, getToken } = useAuth();
+  const { user } = useUser();
   const queryClient = useQueryClient();
 
   const [page, setPage] = React.useState(1);
@@ -153,7 +154,9 @@ export default function VocabulariesTable({ userInfo, url }: Props) {
     },
   ];
 
-  if (allowedRoles.includes(userInfo.role) || userInfo.id === userId) {
+  const isAllowedEdit = user && (user.publicMetadata?.role as string);
+
+  if (allowedRoles.includes(isAllowedEdit ?? "") || userInfo.id === userId) {
     columns.push({
       id: "actions",
       enableHiding: false,
@@ -226,6 +229,7 @@ export default function VocabulariesTable({ userInfo, url }: Props) {
       enableHiding: false,
     });
   }
+
   const table = useReactTable<GetQueryVocabType>({
     data: data?.vocabularies ?? [],
     columns,
