@@ -19,8 +19,9 @@ import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { usePathname } from "next/navigation";
 import { dark } from "@clerk/themes";
 import { useTheme } from "next-themes";
-import "@knocklabs/react/dist/index.css";
 import KnockFeed from "./knock-feed";
+import "@knocklabs/react/dist/index.css";
+
 function TopLevelNavItem({
   href,
   children,

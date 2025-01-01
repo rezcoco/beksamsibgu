@@ -1,8 +1,8 @@
 "use client";
 
 import { axiosRequest } from "@/lib/queries";
-import { GetQueryEditSuggestionsType, GetQueryUserType } from "@/types/type";
-import { useAuth } from "@clerk/nextjs";
+import { GetQueryEditSuggestionsType } from "@/types/type";
+import { useAuth, useUser } from "@clerk/nextjs";
 import {
   ChevronLeft,
   ChevronRight,
@@ -40,10 +40,6 @@ import {
 import EditSuggestionsTabActions from "./editsuggestions-table-actions";
 import { cn } from "@/lib/utils";
 
-type Props = {
-  userInfo: GetQueryUserType;
-};
-
 type ReducerValueType = {
   status: number | undefined;
   createdBy: number | undefined;
@@ -51,8 +47,9 @@ type ReducerValueType = {
   query: string;
 };
 
-export default function EditSuggestionsTable({ userInfo }: Props) {
+export default function EditSuggestionsTable() {
   const { getToken, userId } = useAuth();
+  const { user } = useUser();
 
   const [page, setPage] = React.useState(1);
 
@@ -65,7 +62,7 @@ export default function EditSuggestionsTable({ userInfo }: Props) {
 
   const queryKey = [
     "/users/edit-suggestions",
-    userInfo.id,
+    user?.id,
     page,
     filterState.query,
   ];
@@ -81,7 +78,7 @@ export default function EditSuggestionsTable({ userInfo }: Props) {
     queryFn: async () => {
       const token = await getToken();
       const res = await axiosRequest.get(
-        `/users/${userInfo.id}/edit-suggestions?${filterState.query}`,
+        `/users/${user?.id}/edit-suggestions?${filterState.query}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -304,7 +301,6 @@ export default function EditSuggestionsTable({ userInfo }: Props) {
                     <TableCell>
                       <EditSuggestionsTabActions
                         data={editSuggestion}
-                        userInfo={userInfo}
                         queryKey={queryKey}
                       />
                     </TableCell>

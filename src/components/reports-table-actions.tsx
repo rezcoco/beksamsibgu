@@ -3,12 +3,12 @@
 import { MoreHorizontal } from "lucide-react";
 import React from "react";
 import { Button } from "./ui/button";
-import { GetQueryReportType, GetQueryUserType } from "@/types/type";
+import { GetQueryReportType } from "@/types/type";
 import { toastError } from "@/lib/utils";
 import toast from "react-hot-toast";
 import { axiosRequest } from "@/lib/queries";
 import { useQueryClient } from "react-query";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,18 +23,15 @@ import { ScrollArea } from "./ui/scroll-area";
 
 type Props = {
   data: GetQueryReportType;
-  userInfo: GetQueryUserType;
   queryKey: any[];
 };
 
-export default function ReportsTableActions({
-  data,
-  userInfo,
-  queryKey,
-}: Props) {
+export default function ReportsTableActions({ data, queryKey }: Props) {
   const [openDialog, setOpenDialog] = React.useState(false);
   const queryClient = useQueryClient();
   const { getToken, userId } = useAuth();
+  const { user } = useUser();
+  const role = user?.publicMetadata.role as string;
 
   async function onDelete() {
     const toastId = toast.loading("Memuat...");
@@ -108,10 +105,9 @@ export default function ReportsTableActions({
           {data.reporterId === userId && (
             <DropdownMenuItem onClick={onDelete}>Hapus</DropdownMenuItem>
           )}
-          {allowedRoles.includes(userInfo.role) &&
-            data.status === "pending" && (
-              <DropdownMenuItem onClick={onResolve}>Resolve</DropdownMenuItem>
-            )}
+          {allowedRoles.includes(role) && data.status === "pending" && (
+            <DropdownMenuItem onClick={onResolve}>Resolve</DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>

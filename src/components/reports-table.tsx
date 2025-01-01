@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import { GetQueryReportType, GetQueryUserType } from "@/types/type";
+import { GetQueryReportType } from "@/types/type";
 import { allowedRoles } from "@/constants";
 import Link from "next/link";
 import { format } from "date-fns";
@@ -23,7 +23,7 @@ import {
   ListFilter,
   Loader2,
 } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import ReportsActions from "./reports-table-actions";
 import {
@@ -38,7 +38,6 @@ import {
 import { cn } from "@/lib/utils";
 
 type Props = {
-  userInfo: GetQueryUserType;
   url: string;
 };
 
@@ -48,9 +47,11 @@ type ReducerValueType = {
   query: string;
 };
 
-export default function ReportsTable({ userInfo, url }: Props) {
+export default function ReportsTable({ url }: Props) {
   const [page, setPage] = React.useState(1);
   const { getToken } = useAuth();
+  const { user } = useUser();
+  const role = user?.publicMetadata.role as string;
 
   const [filterState, filterDispatch] = React.useReducer(reducer, {
     status: undefined,
@@ -58,7 +59,7 @@ export default function ReportsTable({ userInfo, url }: Props) {
     query: "page=1",
   });
 
-  const queryKey = [`/reports`, userInfo.id, page, filterState.query];
+  const queryKey = [`/reports`, user?.id, page, filterState.query];
 
   const { isLoading, isError, data } = useQuery<{
     total: number;
@@ -194,9 +195,7 @@ export default function ReportsTable({ userInfo, url }: Props) {
               <TableRow>
                 <TableHead>ID Laporan</TableHead>
                 <TableHead>Laporan</TableHead>
-                {allowedRoles.includes(userInfo.role) && (
-                  <TableHead>Pelapor</TableHead>
-                )}
+                {allowedRoles.includes(role) && <TableHead>Pelapor</TableHead>}
                 <TableHead>Kosa kata dilaporkan</TableHead>
                 <TableHead>Dibuat tanggal</TableHead>
                 <TableHead>Status</TableHead>
@@ -210,7 +209,7 @@ export default function ReportsTable({ userInfo, url }: Props) {
                     <TableCell className="truncate max-w-12">
                       {report.message}
                     </TableCell>
-                    {allowedRoles.includes(userInfo.role) && (
+                    {allowedRoles.includes(role) && (
                       <TableCell>
                         <Link
                           target="_blank"
@@ -241,11 +240,7 @@ export default function ReportsTable({ userInfo, url }: Props) {
                       {report.status}
                     </TableCell>
                     <TableCell>
-                      <ReportsActions
-                        userInfo={userInfo}
-                        data={report}
-                        queryKey={queryKey}
-                      />
+                      <ReportsActions data={report} queryKey={queryKey} />
                     </TableCell>
                   </TableRow>
                 ))

@@ -32,7 +32,7 @@ import {
 import { useQuery, useQueryClient } from "react-query";
 import { axiosRequest } from "@/lib/queries";
 import { useAuth, useUser } from "@clerk/nextjs";
-import { GetQueryUserType, GetQueryVocabType } from "@/types/type";
+import { GetQueryVocabType } from "@/types/type";
 import { allowedRoles } from "@/constants";
 import { toastError } from "@/lib/utils";
 import Link from "next/link";
@@ -40,7 +40,6 @@ import VocabulariesTabActions from "./vocabularies-table-actions";
 import toast from "react-hot-toast";
 
 type Props = {
-  userInfo: GetQueryUserType;
   url: string;
 };
 
@@ -54,9 +53,10 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   return itemRank.passed;
 };
 
-export default function VocabulariesTable({ userInfo, url }: Props) {
+export default function VocabulariesTable({ url }: Props) {
   const { userId, getToken } = useAuth();
   const { user } = useUser();
+  const role = user?.publicMetadata.role as string;
   const queryClient = useQueryClient();
 
   const [page, setPage] = React.useState(1);
@@ -64,7 +64,7 @@ export default function VocabulariesTable({ userInfo, url }: Props) {
   const [selectedRows, setSelectedRows] = React.useState({});
   const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
 
-  const queryKey = ["/vocabularies", userInfo.id, page];
+  const queryKey = ["/vocabularies", user?.id, page];
 
   const { isLoading, isError, data } = useQuery<{
     total: number;
@@ -115,7 +115,7 @@ export default function VocabulariesTable({ userInfo, url }: Props) {
       accessorKey: "hangeul",
       header: "Hangeul",
       cell: ({ row }) =>
-        allowedRoles.includes(userInfo.role) || userId === userInfo.id ? (
+        allowedRoles.includes(role) || userId === user?.id ? (
           <p className="capitalize">{row.getValue("hangeul")}</p>
         ) : (
           <Link
@@ -156,7 +156,7 @@ export default function VocabulariesTable({ userInfo, url }: Props) {
 
   const isAllowedEdit = user && (user.publicMetadata?.role as string);
 
-  if (allowedRoles.includes(isAllowedEdit ?? "") || userInfo.id === userId) {
+  if (allowedRoles.includes(isAllowedEdit ?? "") || user?.id === userId) {
     columns.push({
       id: "actions",
       enableHiding: false,

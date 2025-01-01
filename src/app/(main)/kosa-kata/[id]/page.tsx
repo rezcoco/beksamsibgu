@@ -74,9 +74,14 @@ const VocabDetail = async ({ params: { id } }: { params: { id: string } }) => {
           <>
             <div className="mt-8">
               <FloatSeparator placeholder="Catatan" />
-              <p className="text-zinc-700 dark:text-zinc-400 pl-4">
-                {data.note}
-              </p>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: data.note
+                    .replace(/\n/g, "<br />")
+                    .replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;"),
+                }}
+                className="text-zinc-700 dark:text-zinc-400 pl-4"
+              />
             </div>
           </>
         )}

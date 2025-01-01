@@ -10,7 +10,6 @@ import {
 import { Check, LoaderCircle, PlusIcon, XIcon } from "lucide-react";
 import { Button } from "./button";
 import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
 
 import { ScrollArea } from "./ui/scroll-area";
 import { useForm } from "react-hook-form";
@@ -40,6 +39,7 @@ import { axiosRequest } from "@/lib/queries";
 import { toastError } from "@/lib/utils";
 import { useQueryClient } from "react-query";
 import { useTheme } from "next-themes";
+import { Textarea } from "./ui/textarea";
 
 const AddVocabulary = () => {
   const router = useRouter();

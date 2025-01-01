@@ -23,6 +23,7 @@ import { rankItem } from "@tanstack/match-sorter-utils";
 import { GetQueryVocabType } from "@/types/type";
 import VocabActions from "./vocab-actions";
 import { CaretSortIcon } from "@radix-ui/react-icons";
+import { useDataStore } from "@/lib/store";
 
 const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
   const itemRank = rankItem(row.getValue(columnId), value);
@@ -38,7 +39,9 @@ type Props = {
   data: GetQueryVocabType[];
 };
 
-export default function ListTable({ data }: Props) {
+export default function ListTable() {
+  const { vocabularies } = useDataStore();
+
   const columns: ColumnDef<GetQueryVocabType>[] = [
     {
       accessorKey: "hangeul",
@@ -82,7 +85,7 @@ export default function ListTable({ data }: Props) {
   ];
 
   const table = useReactTable({
-    data,
+    data: vocabularies,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),

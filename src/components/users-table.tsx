@@ -10,25 +10,21 @@ import {
   TableHeader,
   TableRow,
 } from "./ui/table";
-import { GetQueryUserType } from "@/types/type";
 import Link from "next/link";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 import { useQuery } from "react-query";
 import { ChevronLeft, ChevronRight, CircleX, Loader2 } from "lucide-react";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { Button } from "./ui/button";
 import { cn } from "@/lib/utils";
 
-type Props = {
-  userInfo: GetQueryUserType;
-};
-
-export default function UsersTable({ userInfo }: Props) {
+export default function UsersTable() {
   const [page, setPage] = React.useState(1);
   const { getToken } = useAuth();
+  const { user } = useUser();
 
-  const queryKey = [`/users`, userInfo.id, page];
+  const queryKey = [`/users`, user?.id, page];
 
   const { isLoading, isError, data } = useQuery<{
     total: number;

@@ -239,10 +239,7 @@ export default async function Profile({
         <TabsContent value="vocabulary">
           <Card>
             <CardContent>
-              <VocabulariesTable
-                url={`/users/${userInfo.id}/vocabularies`}
-                userInfo={userInfo}
-              />
+              <VocabulariesTable url={`/users/${userInfo.id}/vocabularies`} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -250,10 +247,7 @@ export default async function Profile({
         <TabsContent value="reports">
           <Card>
             <CardContent>
-              <ReportsTable
-                url={`/users/${userInfo.id}/reports`}
-                userInfo={userInfo}
-              />
+              <ReportsTable url={`/users/${userInfo.id}/reports`} />
             </CardContent>
           </Card>
         </TabsContent>
@@ -261,7 +255,7 @@ export default async function Profile({
         <TabsContent value="editSuggestions">
           <Card>
             <CardContent>
-              <EditSuggestionsTable userInfo={userInfo} />
+              <EditSuggestionsTable />
             </CardContent>
           </Card>
         </TabsContent>

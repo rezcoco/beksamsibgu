@@ -1,6 +1,6 @@
 "use client";
 
-import { GetQueryEditSuggestionsType, GetQueryUserType } from "@/types/type";
+import { GetQueryEditSuggestionsType } from "@/types/type";
 import { Loader2, Minus, MoreHorizontal, Plus } from "lucide-react";
 import React from "react";
 import { Button } from "./ui/button";
@@ -24,7 +24,7 @@ import {
 import { ScrollArea } from "./ui/scroll-area";
 import FormVocabulary from "./form-vocabulary";
 import { axiosRequest } from "@/lib/queries";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { useQueryClient } from "react-query";
 import toast from "react-hot-toast";
 import { toastError } from "@/lib/utils";
@@ -33,7 +33,6 @@ import { revalidate, sendNotification } from "@/lib/actions";
 
 type Props = {
   data: GetQueryEditSuggestionsType;
-  userInfo: GetQueryUserType;
   queryKey: any[];
 };
 
@@ -42,15 +41,12 @@ type ApproveRejectReducerValue = {
   status: number | undefined;
 };
 
-export default function EditSuggestionsTableActions({
-  data,
-  userInfo,
-  queryKey,
-}: Props) {
+export default function EditSuggestionsTableActions({ data, queryKey }: Props) {
   const [open, setOpen] = React.useState(false);
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [isDeleteLoading, setIsDeleteLoading] = React.useState(false);
   const { getToken } = useAuth();
+  const { user } = useUser();
   const queryClient = useQueryClient();
 
   const [state, dispatch] = React.useReducer(reducer, {
@@ -223,27 +219,17 @@ export default function EditSuggestionsTableActions({
 
       await queryClient.refetchQueries({ queryKey });
       toast.success("Berhasil");
-      if (status === 2) {
-        sendNotification(
-          "edit-suggestion-approve",
-          userInfo.id,
-          [data.authorId],
-          {
-            vocabularyId: data.vocabularyId,
-          }
-        );
+      if (status === 2 && user) {
+        sendNotification("edit-suggestion-approve", user?.id, [data.authorId], {
+          vocabularyId: data.vocabularyId,
+        });
 
         await revalidate("/kosa-kata");
         await revalidate(`/kosa-kata/${data.vocabularyId}`);
-      } else {
-        sendNotification(
-          "edit-suggestion-reject",
-          userInfo.id,
-          [data.authorId],
-          {
-            editSuggestionId: data.id.toUpperCase(),
-          }
-        );
+      } else if (user) {
+        sendNotification("edit-suggestion-reject", user?.id, [data.authorId], {
+          editSuggestionId: data.id.toUpperCase(),
+        });
       }
     } catch (error: any) {
       const status = error?.response?.status;
@@ -271,7 +257,7 @@ export default function EditSuggestionsTableActions({
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {userInfo.id === data.authorId && data.status === "pending" ? (
+          {user?.id === data.authorId && data.status === "pending" ? (
             <>
               <DropdownMenuItem onClick={() => setOpen(true)}>
                 Edit

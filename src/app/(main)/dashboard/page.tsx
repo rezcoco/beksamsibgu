@@ -4,28 +4,20 @@ import VocabulariesTable from "@/components/vocabularies-table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { axiosRequest } from "@/lib/queries";
-import { GetQueryStatisticsType, GetQueryUserType } from "@/types/type";
+import { GetQueryStatisticsType } from "@/types/type";
 import { auth } from "@clerk/nextjs/server";
 import { BookOpen, Flag, Users } from "lucide-react";
 import UsersTable from "@/components/users-table";
 
 export default async function Dashboard() {
-  const { userId, getToken } = auth();
-  const [s, u] = await Promise.all([
-    axiosRequest.get("/statistics", {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    }),
-    axiosRequest.get(`/users/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${await getToken()}`,
-      },
-    }),
-  ]);
+  const { getToken } = auth();
+  const s = await axiosRequest.get("/statistics", {
+    headers: {
+      Authorization: `Bearer ${await getToken()}`,
+    },
+  });
 
   const statistics: GetQueryStatisticsType = s.data.data;
-  const userInfo: GetQueryUserType = u.data.data;
 
   return (
     <section className="min-h-screen my-10">
@@ -73,24 +65,17 @@ export default async function Dashboard() {
           </Card>
         </div>
         <Tabs defaultValue="vocabulary" className="space-y-4">
-          {userId === userInfo.id ? (
-            <TabsList>
-              <TabsTrigger value="vocabulary">Kosa Kata</TabsTrigger>
-              <TabsTrigger value="reports">Laporan</TabsTrigger>
-              <TabsTrigger value="users">Pengguna</TabsTrigger>
-            </TabsList>
-          ) : (
-            <h2 className="text-xl font-bold mb-5">Kosa Kata Pengguna</h2>
-          )}
+          <TabsList>
+            <TabsTrigger value="vocabulary">Kosa Kata</TabsTrigger>
+            <TabsTrigger value="reports">Laporan</TabsTrigger>
+            <TabsTrigger value="users">Pengguna</TabsTrigger>
+          </TabsList>
 
           {/* Vocabulary Table */}
           <TabsContent value="vocabulary">
             <Card>
               <CardContent>
-                <VocabulariesTable
-                  url="/statistics/vocabularies"
-                  userInfo={userInfo}
-                />
+                <VocabulariesTable url="/statistics/vocabularies" />
               </CardContent>
             </Card>
           </TabsContent>
@@ -99,7 +84,7 @@ export default async function Dashboard() {
           <TabsContent value="reports">
             <Card>
               <CardContent>
-                <ReportsTable url="/statistics/reports" userInfo={userInfo} />
+                <ReportsTable url="/statistics/reports" />
               </CardContent>
             </Card>
           </TabsContent>
@@ -107,7 +92,7 @@ export default async function Dashboard() {
           <TabsContent value="users">
             <Card>
               <CardContent>
-                <UsersTable userInfo={userInfo} />
+                <UsersTable />
               </CardContent>
             </Card>
           </TabsContent>

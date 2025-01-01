@@ -8,6 +8,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Filter from "./filter";
 import AddVocabulary from "./add-vocabulary";
 import ListTable from "./list-table";
+import { useDataStore } from "@/lib/store";
 
 type Props = {
   data: GetQueryVocabType[];
@@ -18,6 +19,11 @@ export default function ListTabs({ data }: Props) {
   const router = useRouter();
   const pathname = usePathname();
   const activeTab = searchParams.get("tab") ?? "list";
+  const { setVocabularies } = useDataStore();
+
+  React.useEffect(() => {
+    setVocabularies(data);
+  }, [data, setVocabularies]);
 
   function onTabChange(value: string) {
     const sp = new URLSearchParams(searchParams);
@@ -43,7 +49,7 @@ export default function ListTabs({ data }: Props) {
         <List data={data} />
       </TabsContent>
       <TabsContent value="table">
-        <ListTable data={data} />
+        <ListTable />
       </TabsContent>
     </Tabs>
   );
