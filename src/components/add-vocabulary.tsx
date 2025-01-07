@@ -174,10 +174,8 @@ const AddVocabulary = () => {
         }
       );
 
-      console.log(values);
-
       await revalidate("/kosa-kata");
-      await queryClient.refetchQueries({ queryKey: ["tags"] });
+      router.refresh();
       toast.success("Berhasil menambahkan", { duration: 2500 });
     } catch (error: any) {
       const status = error?.response?.status;
