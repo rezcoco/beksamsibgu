@@ -1,12 +1,21 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { allowedRoles } from "./constants"
+import { NextResponse } from "next/server";
 
 const isProtectedRoutes = createRouteMatcher(["/dashboard"])
 
 export default clerkMiddleware((auth, req) => {
+  const role = auth().sessionClaims?.role || "";
+  const isAllowed = allowedRoles.includes(role);
+
   if (isProtectedRoutes(req)) {
-    auth().protect()
+    if (!isAllowed) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
   }
-})
+
+  return NextResponse.next();
+});
 
 export const config = {
   matcher: [

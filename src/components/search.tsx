@@ -98,13 +98,12 @@ function useAutocomplete({ close }: { close: () => void }) {
                     indexName: "beksamsibgu",
                     query: disassemble(query).join(""),
                     params: {
-                      hitsPerPage: 5,
+                      hitsPerPage: 6,
                     },
                   },
                 ],
               });
             },
-            // ...
           },
         ];
       },
@@ -234,6 +233,7 @@ function SearchResults({
   }
 
   return (
+    // <ScrollArea className="h-[250px]">
     <ul {...autocomplete.getListProps()}>
       {collection.items.map((result, resultIndex) => (
         <SearchResult
@@ -246,6 +246,7 @@ function SearchResults({
         />
       ))}
     </ul>
+    // </ScrollArea>
   );
 }
 
